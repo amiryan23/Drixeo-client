@@ -32,11 +32,11 @@ const SettingsModal = ({openSettingsModal,setOpenSettingsModal,toast}) => {
 
 	useEffect(()=>{
 		if(thisUser && thisUser?.custom_settings){
-			setColorName(thisUser?.custom_settings?.nameColor)
-			setBgColor(thisUser?.custom_settings?.bgColorMsg)
-			setSparkle(thisUser?.custom_settings?.chatSparkle)
-			setProfileBgColor(thisUser?.custom_settings?.profileBg)
-			setProfileSparkle(thisUser?.custom_settings?.profileSparkle)
+			setColorName(thisUser?.custom_settings?.nameColor || "#5F9EA0")
+			setBgColor(thisUser?.custom_settings?.bgColorMsg || "#444")
+			setSparkle(thisUser?.custom_settings?.chatSparkle || false)
+			setProfileBgColor(thisUser?.custom_settings?.profileBg || 'transparent')
+			setProfileSparkle(thisUser?.custom_settings?.profileSparkle || false)
 		}
 	},[thisUser])
 
