@@ -1,0 +1,61 @@
+  .megaContainer{
+		width: 100vw;
+		height: 100dvh;
+		background: linear-gradient(159deg, rgba(210,170,230,0.1) 15%, rgba(107,22,176,0.1) 100%);
+		// background-color: rgba(60, 60, 60, 1.0);
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		justify-content: center;
+		align-items: center;
+    	backdrop-filter: blur(5px);
+    	-webkit-backdrop-filter:  blur(5px);
+    	-moz-backdrop-filter:  blur(5px);
+   	 	-ms-backdrop-filter:   blur(5px);
+    	-o-backdrop-filter: blur(5px);
+    	// padding: 10px;
+    	z-index: 999;	
+    	font-size: 20px;
+    	font-weight: bold;
+    	color: whitesmoke;
+		user-select: none;
+ 		font-family: "Nunito", serif;
+ 		font-weight: 100;
+ 		font-style: normal;
+
+span{
+	  position: absolute;
+  top: 0;
+  left:0;
+  right: 0;
+  bottom: 0;
+  border-radius: 7px;
+  opacity: 0.7;
+.skeleton {
+  position: absolute;
+  top: 0;
+  left:0;
+  right: 0;
+  bottom: 0;
+  background: transparent; 
+
+}
+}
+
+
+    	.title{
+    		font-size: 20px;
+    		font-weight: bold;
+  background: -webkit-linear-gradient(180deg, rgba(78,141,246,0.9) 0%, rgba(178,121,201,0.9) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding-top: 10px;
+  letter-spacing: 2px;
+    	}
+
+    }

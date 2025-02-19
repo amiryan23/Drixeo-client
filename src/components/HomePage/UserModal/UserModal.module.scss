@@ -1,0 +1,429 @@
+  .userModalContainer{
+		width: 100vw;
+		height: 100dvh;
+		background-color: rgba(0, 0, 0, 0.3);
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		display: flex;
+		justify-content: center;
+		align-items: flex-end;
+    	backdrop-filter: blur(5px);
+    	-webkit-backdrop-filter:  blur(5px);
+    	-moz-backdrop-filter:  blur(5px);
+   	 	-ms-backdrop-filter:   blur(5px);
+    	-o-backdrop-filter: blur(5px);
+    	// padding: 10px;
+    	z-index: 999;	
+
+	.userModalContent{
+			width: 50%;
+			height: auto;
+			// background-color: whitesmoke;
+			display: flex;
+			flex-direction: column;
+			// gap: 5px;
+			justify-content: flex-start;
+			align-items: center;
+			// background: linear-gradient(159deg, rgba(91,111,120,1) 15%, rgba(15,28,38,1) 100%);
+			// background-color: rgba(0, 0, 0, 0.3);
+			// background: linear-gradient(159deg, rgba(210,170,230,0.2) 15%, rgba(107,22,176,0.4) 100%);
+			background: linear-gradient(180deg, rgba(78,141,246,0.5) 0%, rgba(178,121,201,0.5) 100%);
+
+			padding-bottom: 15px;
+			border-radius: 15px;
+			border-top: 2px solid rgba(256, 256, 256, 0.2);
+
+
+			.userInfoContent1{
+				width: 100%;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				padding-bottom: 10px;
+				gap: 5px;
+				border-bottom: 1px solid whitesmoke;
+				position: relative;
+				border-radius: 15px 15px 0px 0px;
+
+    	.exitBtn{
+    		width: 100%;
+    		display: flex;
+    		justify-content: space-between;
+    		align-items: center;
+    		padding-right: 3px;
+
+    		.giftPremium{
+    			padding: 2px 14px 2px 14px;
+    			background-color: rgba(0, 0, 0, 0.4);
+    			display: flex;
+    			flex-direction: row;
+    			justify-content: center;
+    			align-items: center;
+    			gap: 3px;
+    			font-size: 10px;
+    			font-weight: bold;
+    			border-radius: 7px;
+    			color: whitesmoke;
+    			margin-left: 5px;
+    			transition: 100ms linear;
+
+
+    			svg{
+    				color:#0088cc ;
+    				font-size: 15px;
+    			}
+
+    		}
+
+    		.giftPremium:active{
+					background-color: rgba(256, 256, 256, 0.7);
+					color: #222;
+					transform: scale(0.95);
+					transition: 100ms linear;
+    		}
+
+    		span{
+    			svg{
+    				font-size: 25px;
+    				color: whitesmoke;
+    			}
+    		}
+    	}
+
+				img{
+					width: 100px;
+					height: 100px;
+					border-radius: 50%;
+					border: 1px solid whitesmoke;
+					z-index: 33;
+				}
+
+				.userName{
+					font-size: 13px;
+					color: whitesmoke;
+					font-weight: bold;
+					display: flex;
+					flex-direction: row;
+       				align-items: center;
+       				gap: 3px;
+					// border-bottom: 1px solid whitesmoke;
+
+			svg{
+		  		color: #0088cc;
+  		  		font-size: 19px;					
+				}
+				}
+
+       	.level1{
+
+       		span{
+       		padding: 1px 4px 1px 4px;
+       		background: rgba(44,130,201,0.5);
+					font-family: Arial,sans-serif;
+       		font-size: 7px;
+       		font-weight: bold;
+       		color: whitesmoke;
+       		border-radius: 3px;
+       		}
+       	}
+
+       	.level2{
+
+       		span{
+       		padding: 1px 4px 1px 4px;
+       		background: rgba(72, 113, 247, 0.5);
+					font-family: Arial,sans-serif;
+       		font-size: 7px;
+       		font-weight: bold;
+       		color: whitesmoke;
+       		border-radius: 3px;
+       		}
+       	}
+
+       	.level3{
+
+       		span{
+       		padding: 1px 4px 1px 4px;
+       		background: rgba(0, 181, 204, 0.5);
+					font-family: Arial,sans-serif;
+       		font-size: 7px;
+       		font-weight: bold;
+       		color: whitesmoke;
+       		border-radius: 3px;
+       		}
+       	}
+
+
+       	.level4{
+
+       		span{
+       		padding: 1px 4px 1px 4px;
+       		background: rgba(77, 5, 232, 0.5);
+					font-family: Arial,sans-serif;
+       		font-size: 7px;
+       		font-weight: bold;
+       		color: whitesmoke;
+       		border-radius: 3px;
+       		}
+       	}
+
+       	.level5{
+
+       		span{
+       		padding: 1px 4px 1px 4px;
+       		background: linear-gradient(180deg, rgba(189,28,255,0.5) 0%, rgba(15,60,255,0.5) 100%);
+					font-family: Arial,sans-serif;
+       		font-size: 7px;
+       		font-weight: bold;
+       		color: whitesmoke;
+       		border-radius: 3px;
+       		}
+       	}
+			}
+
+			.userInfoContent2{
+				width: 100%;
+				display: flex;
+				flex-direction: column;
+				justify-content: flex-start;
+
+				.userInfoItem1{
+					display: flex;
+					flex-direction: row;
+
+
+
+
+					.giftBtn{
+						
+						flex: 1;
+						display: flex;
+						justify-content: center;
+						align-items: center;
+						border: none;
+						outline: none;
+						background-color: rgba(0, 0, 0, 0.2);
+						color: whitesmoke;
+						padding: 3px 35px 3px 35px;
+						border-right: 1px solid rgba(256, 256, 256, 0.5);
+						border-bottom: 2px solid rgba(256, 256, 256, 0.5);
+						font-size: 13px;
+						font-weight: bold;
+						font-family: "Nunito", serif;
+						transition: 200ms linear;
+
+					}
+					.statsBtn{
+						
+						flex: 1;
+						display: flex;
+						justify-content: center;
+						align-items: center;
+						border: none;
+						outline: none;
+						color: whitesmoke;
+						padding: 3px 35px 3px 35px;
+						background-color: rgba(0, 0, 0, 0.2);
+						font-size: 13px;
+						font-weight: bold;
+						font-family: "Nunito", serif;
+						border-bottom: 2px solid rgba(256, 256, 256, 0.5);
+						transition: 200ms linear;
+
+
+					}
+
+					.activeBtn{
+						width: 200px;
+						flex: 0;
+						border-bottom: 2px solid #0088cc;
+						background-color: rgba(0, 0, 0, 0.4);
+						transition: 200ms linear;
+					}
+				}
+
+				.userInfoItem2{
+					width: 100%;
+					flex: 1;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					overflow-x: hidden;
+
+					div{
+						width: 100%;
+						height: 250px;
+						color: whitesmoke;
+						font-size: 15px;
+						letter-spacing: 2px;
+						font-weight: bold;
+						display: flex;
+						justify-content: center;
+						align-items: center;
+					}
+
+					.userGiftContent{
+						width: 100%;
+						height: 250px;
+						display: flex;
+						justify-content: flex-start;
+						align-items: flex-start;
+						overflow-y: scroll;
+
+
+						.userGiftMiniContent{
+							width: 100%;
+							height: auto;
+						color: whitesmoke;
+						font-size: 15px;
+						letter-spacing: 2px;
+						font-weight: bold;
+						display: flex;
+						flex-direction: row;
+						gap: 2px;
+						justify-content: center;
+						align-items: center;
+						flex-wrap: wrap;
+						padding-top: 5px;
+						padding-left: 3px;
+						padding-right: 3px;
+						padding-bottom: 15px;
+
+						
+
+						.item1{
+							// flex: 1;
+							width: 75px;
+							height: 75px;
+							border: 1px solid rgba(256, 256, 256, 0.5);
+							background-color: rgba(256, 256, 256, 0.3);
+							border-radius: 7px;
+							display: flex;
+							flex-direction: row;
+							gap: 1px;
+							align-items: center;
+							justify-content: center;
+							transition: 70ms linear;
+
+							svg{
+								transition: 70ms linear;
+								color: rgba(256, 256, 256, 0.7);
+							}
+						}	
+
+						.item1:active{
+							transform: scale(0.9);
+							transition: 70ms linear;
+							border: 1px solid #222;
+
+							svg{
+								color: #222;
+								transition: 70ms linear;
+							}
+						}	
+
+						.item2{
+							width: 90px;
+							height: auto;
+							border: 1px solid rgba(256, 256, 256, 0.5);
+							background-color: rgba(256, 256, 256, 0.3);
+							border-radius: 7px;
+							display: flex;
+							flex-direction: column;
+							justify-content: space-between;
+							padding: 3px;
+							align-items: center;
+							position: relative;
+
+							.miniItem1{
+								position: absolute;
+								left: 5px;
+								// width: 100%;
+								// display: flex;
+								// justify-content: flex-start;
+								font-size: 11px;
+								font-weight: bold;
+								color: whitesmoke;
+
+								svg{
+									font-size: 18px;
+									color: whitesmoke;
+								}
+
+							}
+
+							.miniItem2{
+								width: 100%;
+								min-height: 50px;
+								// height: 50px;
+								transition: 100ms linear;
+							}
+
+							.miniItem3{
+								width: 100%;
+								display: flex;
+								flex-direction: row;
+								align-items: center;
+								justify-content: flex-start;
+								gap: 2px;
+								font-size: 9px;
+								transition: 100ms linear;
+
+								img{
+									width: 18px;
+									height: 18px;
+									border: 1px solid whitesmoke;
+									border-radius: 50%;
+								}
+							}
+						}	
+
+						.hiddenGift{
+							// background-color: #999;
+							.miniItem2{
+								opacity: 0.5;
+								transition: 100ms linear;
+							}
+							.miniItem3{
+								opacity: 0.5;
+								transition: 100ms linear;
+							}
+						}
+
+						.noGifts{
+							flex: 1;
+							width: 100px;
+							display: flex;
+							justify-content: center;
+							align-items: center;
+							padding: 20px;
+							background-color: rgba(0, 0, 0, 0.3);
+							border-radius: 10px;
+							font-size: 14px;
+							font-weight: bold;
+						}
+						}			
+					}
+				}
+			}
+		}
+	}
+
+
+	@media screen and (max-width: 768px) {
+
+
+	.userModalContainer{
+		.userModalContent{
+			width: 100%;
+		}
+	}
+
+	
+}
+
+  

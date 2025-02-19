@@ -1,0 +1,30 @@
+.projectInfoContainer{
+	width: 90%;
+	display:flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 15px;
+	margin-bottom: 20px;
+	padding: 7px;
+	border-radius: 7px;
+	background-color: rgba(0, 0, 0, 0.3);
+
+
+ .link1{
+ 	text-decoration: underline;
+ 	font-size: 9px;
+ 	font-weight: bold;
+ 	color: rgba(256,256,256,0.7);
+ 	padding: 2px;
+	transition: 70ms linear;
+ 
+ }
+
+ .link1:active{
+ 	transform: scale(1.05);
+ 	color: rgba(256,256,256,1);
+ 	transition: 70ms linear;
+
+ }
+}
