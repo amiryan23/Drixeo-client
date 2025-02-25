@@ -1,5 +1,5 @@
 import s from './YouTubeSearch.module.scss'
-import React, { useState,useEffect } from 'react';
+import React, { useState,useEffect,useRef } from 'react';
 import axios from 'axios';
 import { motion,AnimatePresence} from 'framer-motion';
 import { LiaWindowCloseSolid } from "react-icons/lia";
@@ -15,11 +15,11 @@ const YouTubeSearch = ({openSearchModal,setOpenSearchModal,setIsDisabled,isRoom,
   const { t } = useTranslation();
 
   useEffect(() => {
-  if (newVideoId) {
-    console.log("Обновленный newVideoId:", newVideoId);
+  if (newVideoId && openSearchModal) {
+
     handleVideoIdChange();
   }
-}, [newVideoId]); 
+}, [newVideoId,openSearchModal]); 
 
   const handleSearch = async () => {
     if (!query) return;
@@ -40,7 +40,11 @@ const YouTubeSearch = ({openSearchModal,setOpenSearchModal,setIsDisabled,isRoom,
   };
 
 
+
+  const closeTimer = useRef(null)
+
   const handleVideoClick = (videoId) => {
+    clearTimeout(closeTimer.current)
     if(!isRoom){
     const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
     sessionStorage.setItem('__YoutubeLinkVideo', videoUrl); 
@@ -48,7 +52,7 @@ const YouTubeSearch = ({openSearchModal,setOpenSearchModal,setIsDisabled,isRoom,
     setIsDisabled(false)
   } else {
     setNewVideoId((prevNewVideoId)=>`https://www.youtube.com/watch?v=${videoId}`)
-    setOpenSearchModal(false)
+    closeTimer.current = setTimeout(()=>{setOpenSearchModal(false)},700)
 
   }
   };

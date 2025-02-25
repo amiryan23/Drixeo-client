@@ -104,12 +104,13 @@ useEffect(() => {
   }
 
   newSocket.on('roomUpdated', (data) => {
-  if (data.videoLink !== prevVideoLink.current) {
-    setIsReady(false);
-    prevVideoLink.current = data.videoLink
-  } 
   const decryptRoomData = decryptData(data.encryptedData,process.env.REACT_APP_SECRET_KEY_CODE)
     setRoomData(decryptRoomData);
+
+  if (decryptRoomData.videoLink !== prevVideoLink.current) {
+    setIsReady(false);
+    prevVideoLink.current = decryptRoomData.videoLink
+  } 
   });
 
 const handleVisibilityChange = () => {
