@@ -95,10 +95,14 @@
   	height: 30dvh;
   	background-color: #222;
   	z-index: 222;
+  	touch-action:manipulation;
+  	position: relative;
 
   	iframe{
   		width: 100%;
   		height: 30dvh;
+
+
   	}
   }
 
@@ -191,7 +195,7 @@
 
     .block1{
     	width: 100%;
-    	height: 150px;
+    	height: auto;
     	display: flex;
     	flex-direction: column;
     	gap: 5px;
@@ -210,6 +214,45 @@
     		flex-direction: column;
     		gap: 10px;
     		padding: 7px;
+
+    		.searchBtn{
+    		align-self: flex-start;
+				padding: 7px 14px 7px 14px;
+				font-size: 9px;
+				font-weight: bold;
+				background: linear-gradient(159deg, rgba(212,14,6,0.7) 19%, rgba(171,42,34,0.7) 51%, rgba(89,41,40,0.7) 100%);
+				color: whitesmoke;
+				border-radius: 4px;
+				border: none;
+				outline: none;		
+				cursor: pointer;	
+				transition: 100ms linear;
+				display: flex;
+				flex-direction: row;
+				gap: 3px;
+				align-items: center;
+				justify-content: center;
+
+							&:active{
+					background-color: rgba(256, 256, 256, 0.5);
+					color: #222;
+					transform: scale(0.95);
+					transition: 100ms linear;
+				}
+
+					svg{
+						font-size: 15px;
+						animation: searchAnim 2s linear infinite;
+					}
+
+					@keyframes searchAnim {
+						0%{transform: translateX(0px) translateY(0px) scale(1.0);}
+						25%{transform: translateX(-5px) translateY(-2px) scale(1.05);}
+						75%{transform: translateX(-5px) translateY(2px) scale(1.05);}
+						100%{transform: translateX(0px) translateY(0px) scale(1.0);}
+
+					}
+					}
 
 
     		.item1{

@@ -5,6 +5,12 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { MyContextProvider } from './context/Context';
 import './i18n';
+import telegramAnalytics from '@telegram-apps/analytics';
+
+telegramAnalytics.init({
+    token: process.env.REACT_APP_ANALYTICS_TOKEN, 
+    appName: process.env.REACT_APP_APP_NAME, 
+});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

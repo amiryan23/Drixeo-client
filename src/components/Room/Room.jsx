@@ -31,6 +31,8 @@ import ExitModal from './ExitModal/ExitModal'
 import UserInfo from './UserInfo/UserInfo'
 import PremiumModal from './PremiumModal/PremiumModal'
 import {getStyleLevel} from './../../helpers/getMessageStyle'
+import YouTubeSearch from './../HomePage/YouTubeSearch/YouTubeSearch'
+import { FaSearch } from "react-icons/fa";
 
 
 
@@ -70,6 +72,8 @@ const Room = () => {
   const [lastGift,setLastGift] = useState(null)
   const [lastGiftOpenModal,setLastGiftOpenModal] = useState(false)
   const [isCooldown, setIsCooldown] = useState(false)
+  const [openSearchModal,setOpenSearchModal] = useState(false)
+  const [lastTap,setLastTap] = useState(0)
   
 
   const {  thisUser  } = useContext(MyContext);
@@ -88,6 +92,8 @@ const Room = () => {
 const thisUserId = window.Telegram.WebApp.initDataUnsafe?.user?.id
 
 useEffect(() => {
+  if (!token) return;
+
   const newSocket = io(process.env.REACT_APP_API_URL , {
     query: { token },
   });
@@ -122,7 +128,7 @@ const handleVisibilityChange = () => {
     document.removeEventListener('visibilitychange', handleVisibilityChange);
     newSocket.disconnect();
   };
-}, [roomId, thisUserId]);
+}, [roomId, thisUserId , token]);
 
 
 const handleSendMessage = () => {
@@ -491,7 +497,7 @@ const handleLoading = useCallback(() => {
 }
 },[roomData?.owner])
 
-  return (
+ return (
     <div className={s.megaContainer}>
     <ReadyModal isReady={isReady} handleReadyClick={handleReadyClick} readyVideo={readyVideo} t={t} />
       <div className={s.content1}>
@@ -510,7 +516,7 @@ const handleLoading = useCallback(() => {
         if(roomData?.owner !== window.Telegram.WebApp?.initDataUnsafe?.user?.id ){
          toast.error(t('Only the owner can control the video'))
          window.Telegram.WebApp.HapticFeedback.notificationOccurred("error");
-       }
+       } 
       }}
       >
       <YouTube
@@ -528,6 +534,9 @@ const handleLoading = useCallback(() => {
           playerVars: {
             autoplay: 0,
             controls: 1,
+            rel:0,
+            disablekb:1,
+            iv_load_policy:3
           },
         }}
         style={{
@@ -615,6 +624,7 @@ const handleLoading = useCallback(() => {
         <div className={s.block1}>
           <span className={s.miniItem1}>{t("Room Settings")}</span>
           <span className={s.miniItem2}>
+            <button className={s.searchBtn} onClick={()=>{setOpenSearchModal(true)}}><FaSearch />{t("Search on YouTube")}</button>
             <span className={s.item1}>
             {t("Link")}:
             <input placeholder={roomData?.videoLink} value={newVideoId} type="text"
@@ -1037,6 +1047,7 @@ const handleLoading = useCallback(() => {
      <UserModal openUserModal={openUserModal} setOpenUserModal={setOpenUserModal}/>
      <UserLevelInfo />
      <DeleteModal deleteModal={deleteModal} setDeleteModal={setDeleteModal} roomId={roomId} userId={thisUserId}/>
+     <YouTubeSearch openSearchModal={openSearchModal} setOpenSearchModal={setOpenSearchModal} isRoom={true} handleVideoIdChange={handleVideoIdChange} newVideoId={newVideoId} setNewVideoId={setNewVideoId}/>
 <ToastContainer
 className={s.notificContainer}
 position={openUserModal ? "top-center" : "bottom-center"}

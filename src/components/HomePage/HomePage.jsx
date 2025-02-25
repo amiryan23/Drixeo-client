@@ -20,7 +20,9 @@ import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { IoLockClosed } from "react-icons/io5";
-import { FaHeart } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
+import YouTubeSearch from './YouTubeSearch/YouTubeSearch'
+import { FaCheck } from "react-icons/fa6";
 
 const HomePage = () => {
 	const {  thisUser,setThisUser,loader } = useContext(MyContext);
@@ -38,8 +40,13 @@ const HomePage = () => {
 	const [openSettingsModal,setOpenSettingsModal] = useState(false)
 	const [openUserModal,setOpenUserModal] = useState(false)
 	const [isDisabled, setIsDisabled] = useState(true);
+	const [videoUrl, setVideoUrl] = useState("");
+	const [loadingVideo,setLoadingVideo] = useState(false)
+	const [openSearchModal,setOpenSearchModal] = useState(false)
 
 	const token = sessionStorage.getItem('__authToken');
+
+	const savedLink = sessionStorage.getItem('__YoutubeLinkVideo')
 
 	const thisUserId = window.Telegram.WebApp.initDataUnsafe?.user?.id
 
@@ -67,7 +74,7 @@ useEffect(() => {
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/rooms/create-room`, {
         limit: limite,
-        videoLink: videoLink,
+        videoLink: videoLink || savedLink,
         is_public:isPublic,
         description:description,
         userId: thisUserId,
@@ -229,16 +236,25 @@ const formattedDate = `${day}.${month}.${year}`;
 
 
   const handleInputChange = (e) => {
+
+  	if(savedLink){
+  		sessionStorage.removeItem('__YoutubeLinkVideo')
+  	}
+
+
     const link = e.target.value;
     setVideoLink(link);
 
     const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
-    if (youtubeRegex.test(link)) {
+    if (youtubeRegex.test(link) ) {
       setIsDisabled(false);
     } else {
       setIsDisabled(true); 
     }
   };
+
+
+
 
 	return ( 
 		!loader ?
@@ -416,14 +432,24 @@ const formattedDate = `${day}.${month}.${year}`;
 					onChange={(e)=>{setDescription(e.target.value)}}/>
 					</div>
 					<div className={s.block2}>
-					{t("Youtube video link")}
+					<span className={s.ytbSearch}>{t("Youtube video link")}<button onClick={()=>{setOpenSearchModal(true)}}><FaSearch />{t("Search")}</button></span>
 					<input type="text"
 					className={s.linkinput}
 					placeholder={t("Youtube video link")}
+					value={savedLink || videoLink || ""}
+					disabled={(videoUrl || loadingVideo) && true}
 					onBlur={()=>{
    					window.scrollTo(0, 0);
     				  }}  		
-					onChange={handleInputChange}/></div>
+					onChange={handleInputChange}/>
+					{!isDisabled && <motion.span 
+					className={s.check}
+					initial={{ opacity: 0 ,scale:0.7}}
+        	animate={{ opacity: 1 ,scale:1 }}
+        	exit={{ opacity: 0 , scale:0.7 }}
+        	transition={{ duration: 0.4 }}
+					><FaCheck/></motion.span>}
+					</div>
 					<div className={s.miniContent}>
 					<div className={s.block2}>{t('Quantity')}
 					<span className={s.maxMembers}> 
@@ -452,8 +478,6 @@ const formattedDate = `${day}.${month}.${year}`;
 						</label>
 					</div>
 					</div>
-					<div className={s.uploadTitle}>{t("Upload video (soon)")}</div>
-					<div className={s.uploadBlock}><IoLockClosed/></div>
 					<div className={s.rulesBlock}>
 					{t("Before creating, please review the")}
 					<span className={s.terms} onClick={()=>{
@@ -585,7 +609,7 @@ const formattedDate = `${day}.${month}.${year}`;
      </AnimatePresence>
      <SettingsModal openSettingsModal={openSettingsModal} setOpenSettingsModal={setOpenSettingsModal} toast={toast}/>
      <UserModal openUserModal={openUserModal} setOpenUserModal={setOpenUserModal} />
-     
+  	<YouTubeSearch openSearchModal={openSearchModal} setOpenSearchModal={setOpenSearchModal} setIsDisabled={setIsDisabled}/>   
 <ToastContainer
 className={s.notificContainer}
 position={openUserModal ? "top-center" : "bottom-center"}
