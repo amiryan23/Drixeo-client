@@ -211,9 +211,6 @@ if (roomData?.members.length > roomData?.limit) {
 
 
 useEffect(() => {
-  console.log(
-    `YouTubeControl received: action=${roomData?.videoSettings?.action}, currentTime=${roomData?.videoSettings?.currentTime}`
-  );
 
   const player = playerRef.current;
 
@@ -233,6 +230,11 @@ useEffect(() => {
         currentTime 
       });
     };
+
+  console.log(
+    `YouTubeControl received: action=${roomData?.videoSettings?.action}, currentTime=${roomData?.videoSettings?.currentTime}`
+  );
+
 
     switch (roomData?.videoSettings?.action) {
       case 'play':
@@ -280,13 +282,19 @@ const handleVideoControl = (action) => {
 
 
 const handleReadyClick = () => {
-    const player = playerRef.current;
-    if (player && roomData?.videoLink) {
-      player.playVideo(); 
-       roomData?.videoSettings?.action !== "play" && player.pauseVideo()
-      setIsReady(true); 
+  const player = playerRef.current;
+  if (player && roomData?.videoLink) {
+    player.playVideo();
+    
+    if (roomData?.videoSettings?.action !== "play") {
+      setTimeout(() => {
+        player.pauseVideo();
+      }, 300); 
     }
-  };
+
+    setIsReady(true);
+  }
+};
 
 const handleVideoIdChange = () => {
     socket.emit("videoIdUpdated", { roomId, newVideoId });
@@ -491,10 +499,9 @@ const handleInputChange = (e) => {
 
 
 const handleLoading = useCallback(() => {
-  setTimeout(()=>{setReadyVideo((prevReadyVideo)=>prevReadyVideo + 25)},3000)
+  setTimeout(()=>{setReadyVideo((prevReadyVideo)=>prevReadyVideo + 25)},6000)
          if(roomData?.owner !== ''  && readyVideo < 100){
   setReadyVideo((prevReadyVideo)=>prevReadyVideo + 50)
-  console.log("test")
 }
 },[roomData?.owner])
 
@@ -525,7 +532,6 @@ const handleLoading = useCallback(() => {
         ref={playerRef}
         onReady={(event) => {
           playerRef.current = event.target;
-           event.target.seekTo(roomData?.videoSettings?.currentTime)
           handleLoading()
         }}
         onPlay={() => roomData?.owner === thisUserId && handleVideoControl('play')}

@@ -7,6 +7,7 @@ import { Oval } from 'react-loader-spinner'
 import { FaSearch } from "react-icons/fa";
 import { useTranslation } from 'react-i18next';
 
+
 const YouTubeSearch = ({openSearchModal,setOpenSearchModal,setIsDisabled,isRoom,handleVideoIdChange,newVideoId,setNewVideoId}) => {
   const [query, setQuery] = useState('');
   const [videos, setVideos] = useState(null);
@@ -93,9 +94,12 @@ const YouTubeSearch = ({openSearchModal,setOpenSearchModal,setIsDisabled,isRoom,
       </button>
       </div>
       {!videos && 
+      <span className={s.searchItems}>
+      <FaSearch/>
       <span className={s.infoSearch}>
  <>{t(`Enter the video title in the search field and click 'Search'`)}<br/><br/>{t(`After that, click on the video you want to watch`)}</>
-      </span>}
+      </span>
+    </span>}
       {videos?.length > 0 && (
         <div className={s.content3}>
             {videos?.map((video) => (
