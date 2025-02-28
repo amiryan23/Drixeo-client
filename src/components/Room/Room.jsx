@@ -73,7 +73,8 @@ const Room = () => {
   const [lastGiftOpenModal,setLastGiftOpenModal] = useState(false)
   const [isCooldown, setIsCooldown] = useState(false)
   const [openSearchModal,setOpenSearchModal] = useState(false)
-  const [lastTap,setLastTap] = useState(0)
+  const [textareaActive,setTextareaActive] = useState(false)
+  const [videoIdPlayer,setVideoIdPlayer] = useState(false)
   
 
   const {  thisUser  } = useContext(MyContext);
@@ -106,7 +107,7 @@ useEffect(() => {
   newSocket.on('roomUpdated', (data) => {
   const decryptRoomData = decryptData(data.encryptedData,process.env.REACT_APP_SECRET_KEY_CODE)
     setRoomData(decryptRoomData);
-
+    setVideoIdPlayer(extractVideoId(decryptRoomData?.videoLink))
   if (decryptRoomData.videoLink !== prevVideoLink.current) {
     setIsReady(false);
     prevVideoLink.current = decryptRoomData.videoLink
@@ -130,6 +131,19 @@ const handleVisibilityChange = () => {
     newSocket.disconnect();
   };
 }, [roomId, thisUserId , token]);
+
+
+
+useEffect(()=>{
+  if(roomData?.videoLink){
+    setTimeout(()=>{
+      setVideoIdPlayer(null)
+    },200)
+    setTimeout(()=>{
+      setVideoIdPlayer(extractVideoId(roomData?.videoLink))
+    },500)
+  }
+},[roomData?.videoLink])
 
 
 const handleSendMessage = () => {
@@ -222,6 +236,9 @@ useEffect(() => {
   if (isReady) {
     let syncInterval; 
 
+    const event = new Event('click')
+    document.body.dispatchEvent(event)
+
     const syncVideo = () => {
       const currentTime = player.getCurrentTime(); 
       socket.emit('youtubeControl', { 
@@ -283,13 +300,21 @@ const handleVideoControl = (action) => {
 
 const handleReadyClick = () => {
   const player = playerRef.current;
+  const event = new Event('click')
+  
   if (player && roomData?.videoLink) {
-    player.playVideo();
+
+
+      document.body.dispatchEvent(event)
+      player.playVideo();
+ 
+
     
     if (roomData?.videoSettings?.action !== "play") {
       setTimeout(() => {
-        player.pauseVideo();
-      }, 300); 
+    document.body.dispatchEvent(event)
+       player.pauseVideo();
+      }, 1500); 
     }
 
     setIsReady(true);
@@ -465,7 +490,7 @@ const handleLongPress = (index) => {
   const longPressTimer = useRef(null);
 
 const handlePressStart = (index) => {
-    longPressTimer.current = setTimeout(()=>{handleLongPress(index)}, 500); 
+    longPressTimer.current = setTimeout(()=>{handleLongPress(index)}, 250); 
   }; 
 
 const handlePressEnd = () => {
@@ -511,7 +536,7 @@ const handleLoading = useCallback(() => {
       <div className={s.content1}>
         <span className={s.item1}>
         {t("Room")}:{roomData?.roomId}
-        <Link to={`https://t.me/share/url?url=${`https://t.me/drixeo_bot/app?startapp=${roomId}`}&text=${`${t("Hello! Watch with us. Room")} ${roomId}`}`} 
+        <Link to={`https://t.me/share/url?url=${`https://t.me/drixeo_bot/app?room=${roomId}`}&text=${`${t("Hello! Watch with us. Room")} ${roomId}`}`} 
         onClick={()=>{window.Telegram.WebApp.HapticFeedback.notificationOccurred("success");}}><FaShareSquare/></Link>
         </span>
         <span onClick={()=>{
@@ -528,7 +553,7 @@ const handleLoading = useCallback(() => {
       }}
       >
       <YouTube
-        videoId={extractVideoId(roomData?.videoLink)} 
+        videoId={videoIdPlayer} 
         ref={playerRef}
         onReady={(event) => {
           playerRef.current = event.target;
@@ -539,11 +564,11 @@ const handleLoading = useCallback(() => {
         onEnd={() =>roomData?.owner === thisUserId && handleVideoControl('end')}
         opts={{
           playerVars: {
+            enablejsapi:1,
+            origin:window.location.origin,
             autoplay: 0,
             controls: 1,
-            rel:0,
-            disablekb:1,
-            iv_load_policy:3
+            playsinline:1
           },
         }}
         style={{
@@ -566,62 +591,6 @@ const handleLoading = useCallback(() => {
         <IoSettingsOutline color={openSettings ? "greenyellow" : "whitesmoke"}/>
         </span>
          }
-      </div>
-      <AnimatePresence>
-      {replyMsg !== null && !roomData?.chatRoom?.find(m => m.id === replyMsg)?.deleted && <motion.div className={s.rpylMsgContent} 
-              key="exitReplyMsg" exit={{ opacity: 0,scale:0.5}}
-              initial={{ opacity: 0 ,y: -50}}
-              animate={{ opacity: 1 ,y: 0 }}
-              transition={{ duration: 0.15 }}>
-      <div className={s.replyItem1}>
-      <span className={s.replyMiniItem1}>
-        <span>{t("In reply")}</span>
-        {roomData?.users?.find(user => user?.userId === roomData?.chatRoom?.find(chat => chat.id === replyMsg)?.userId)?.first_name}
-        {roomData?.users?.find(user => user?.userId === roomData?.chatRoom?.find(chat => chat.id === replyMsg)?.userId)?.is_premium === 1 && <RiVipCrownFill/> }
-      </span> 
-      <span className={s.replyMiniItem2}>
-        {roomData?.chatRoom?.find(chat => chat.id === replyMsg)?.text?.length >= 40 
-        ? <>{roomData?.chatRoom?.find(chat => chat.id === replyMsg)?.text.slice(0,40)}...</>
-        : roomData?.chatRoom?.find(chat => chat.id === replyMsg)?.text
-        }
-      </span>
-      </div>
-      <button className={s.replyItem2} onClick={()=>{setReplyMsg(null)}}>
-        <IoCloseCircle/>
-      </button>
-      </motion.div>}
-      </AnimatePresence>
-      <div className={textActive ? `${s.content5} ${s.textActive}` : s.content5} >
-      <img src={thisUser?.photo_url} alt="" onClick={()=>{setOpenUserModal(true)}}/>
-      <textarea 
-      ref={textAreaRef}
-      placeholder={`${t("Your message")}...`} 
-      maxLength={300}
-      onFocus={(e)=>{
-        e.target.scrollIntoView({ behavior: "smooth", block: "center" });
-      }} 
-      onBlur={()=>{
-        setTextActive(false)
-        window.scrollTo(0, 0);
-      }}  
-  onChange={(e) => {
-    const value = e.target.value;
-  
-
-    clearTimeout(typingTimeout); 
-    typingTimeout = setTimeout(() => {
-      setMessage(value);
-      setTextActive(value.length >= 80); 
-    }, 50);
-  }}
-      autoCorrect="off"  
-      spellCheck="false" 
-      autoComplete="off"
-      name="" 
-      id="">
-        
-      </textarea>
-      <span><button onClick={handleSendMessage} disabled={!message && true}><FaCircleArrowUp/></button></span>
       </div>
       <AnimatePresence>
       {openSettings && roomData?.owner === thisUserId && <motion.div className={s.settingsContent} key="box" exit={{ opacity: 0,y: -250 }}
@@ -672,7 +641,6 @@ const handleLoading = useCallback(() => {
       </AnimatePresence>
       <div className={s.content4}  ref={chatContainerRef}
       onPointerMove={handleScrollChatStart}
-
       >
       <AnimatePresence>
       {lastGiftOpenModal &&
@@ -731,7 +699,7 @@ const handleLoading = useCallback(() => {
       <div className={s.blurContent} onClick={()=>{setLongPressTriggered(null)}}></div>}
       {roomData && roomData?.chatRoom?.map((chat,index) => (
   <motion.div 
-      initial={{ opacity: 0 ,y: -100}}
+      initial={{ opacity: 0 ,y: 50}}
       animate={{ opacity: 1 ,y: 0 }}
       transition={{ duration: 0.5 }} 
       className={s.chatContent} 
@@ -1045,6 +1013,69 @@ const handleLoading = useCallback(() => {
     }
   </motion.div>
 )).slice(roomData?.chatRoom?.length - 100,roomData?.chatRoom?.length)}
+      </div>
+      <div className={s.megaChatContainer} >
+      <AnimatePresence>
+      {replyMsg !== null && !roomData?.chatRoom?.find(m => m.id === replyMsg)?.deleted && <motion.div className={s.rpylMsgContent} 
+              key="exitReplyMsg" exit={{ opacity: 0,y: 50}}
+              initial={{ opacity: 0 ,y: 50}}
+              animate={{ opacity: 1 ,y: 0 }}
+              transition={{ duration: 0.15 }}
+              style={{marginBottom:textareaActive ? "30px" : "0"}} 
+              >
+      <div className={s.replyItem1}>
+      <span className={s.replyMiniItem1}>
+        <span>{t("In reply")}</span>
+        {roomData?.users?.find(user => user?.userId === roomData?.chatRoom?.find(chat => chat.id === replyMsg)?.userId)?.first_name}
+        {roomData?.users?.find(user => user?.userId === roomData?.chatRoom?.find(chat => chat.id === replyMsg)?.userId)?.is_premium === 1 && <RiVipCrownFill/> }
+      </span> 
+      <span className={s.replyMiniItem2}>
+        {roomData?.chatRoom?.find(chat => chat.id === replyMsg)?.text?.length >= 40 
+        ? <>{roomData?.chatRoom?.find(chat => chat.id === replyMsg)?.text.slice(0,40)}...</>
+        : roomData?.chatRoom?.find(chat => chat.id === replyMsg)?.text
+        }
+      </span>
+      </div>
+      <button className={s.replyItem2} onClick={()=>{setReplyMsg(null)}}>
+        <IoCloseCircle/>
+      </button>
+      </motion.div>}
+      </AnimatePresence>
+      <div className={textActive ? `${s.content5} ${s.textActive}` : s.content5} 
+       style={{transform:textareaActive ? "translateY(-30px)" : "translateY(0)"}} >
+      <img src={thisUser?.photo_url} alt="" onClick={()=>{setOpenUserModal(true)}}/>
+      <textarea 
+      ref={textAreaRef}
+      placeholder={`${t("Your message")}...`} 
+      maxLength={300}
+      onFocus={(e)=>{
+        e.target.scrollIntoView({ behavior: "smooth", block: "center" });
+        setTextareaActive(true)
+      }} 
+      onBlur={()=>{
+        setTextActive(false)
+        setTextareaActive(false)
+        window.scrollTo({top:0, behavior:"smooth"});
+      }}  
+  onChange={(e) => {
+    const value = e.target.value;
+  
+
+    clearTimeout(typingTimeout); 
+    typingTimeout = setTimeout(() => {
+      setMessage(value);
+      setTextActive(value.length >= 80); 
+    }, 50);
+  }}
+      autoCorrect="off"  
+      spellCheck="false" 
+      autoComplete="off"
+      name="" 
+      id="">
+        
+      </textarea>
+      <span><button onClick={handleSendMessage} disabled={!message && true}><FaCircleArrowUp/></button></span>
+      </div>
       </div>
      <ExitModal exitModal={exitModal} setExitModal={setExitModal} t={t}/>
      <UserInfo userInfo={userInfo} setUserInfo={setUserInfo} roomData={roomData} setPremiumModal={setPremiumModal} infoState={infoState} setInfoState={setInfoState} setOpenGiftModal={setOpenGiftModal} setOpenGift={setOpenGift} thisUser={thisUser} t={t}/>

@@ -57,7 +57,7 @@ const HomePage = () => {
 
 const { t } = useTranslation();
 
-const start_param = new URLSearchParams(window.Telegram.WebApp?.initData).get('start_param') || null;
+const start_param = new URLSearchParams(window.Telegram.WebApp?.initData).get('room') || null;
 
 useEffect(() => {
     const isRedirected = sessionStorage.getItem('redirected');

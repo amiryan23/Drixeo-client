@@ -182,7 +182,7 @@
   	width: 50%;
   	height: 55dvh;
   	position: absolute;
-  	top: 49dvh;
+  	top: 40dvh;
   	background-color: rgba(0, 0, 0, 0.5);
   	z-index: 10;
   	backdrop-filter: blur(5px);
@@ -547,7 +547,7 @@
    .giftAnimContent{
  	position: absolute;
 	width: 50%;
-	top: 45dvh;
+	top: 35dvh;
 	// left: 0;
 	// right: 0;
 	bottom: 0;  
@@ -1071,6 +1071,8 @@
   				flex-direction: column;
   				gap: 3px;
 
+
+
   	.replyContent{
   		width: 100%;
   		display: flex;
@@ -1119,7 +1121,7 @@
   	.selected{
       min-width: 50%;
       position: fixed;
-      bottom: 180px;
+      bottom: 250px;
   		color: #222;
   		z-index: 555;
   		// margin-bottom: 10px;
@@ -1496,8 +1498,7 @@
   		align-items: flex-start;
   		gap: 5px;
   		position: fixed;
-      bottom: 150px;
-      // right: 5px;
+      bottom: 250px;
   		z-index: 555;
 
   		.msgContent1{
@@ -1691,6 +1692,15 @@ filter: contrast(100%);
   }
 }
 
+
+  .megaChatContainer{
+  	width: 100%;
+  	display: flex;
+  	flex-direction: column;
+  	padding-bottom: 15px;
+  	background-color: #222;
+
+
   .rpylMsgContent{
   	width: 100%;
   	height: auto;
@@ -1762,14 +1772,14 @@ filter: contrast(100%);
 
   .content5{
   	width: 100%;
-  	height: 10dvh;
+  	height: 75px;
   	background-color: #222;
   	display: flex;
   	flex-direction: row;
   	align-items: center;
   	z-index: 99;
   	padding: 10px;
-  	padding-bottom: 15px;
+  	// padding-bottom: 15px;
   	transition: 150ms linear;
   	border-radius: 0px 0px 7px 7px;
   	border-bottom: 1px solid rgba(256, 256, 256, 0.2);
@@ -1802,9 +1812,12 @@ filter: contrast(100%);
   		height: 100%;
   		display: flex;
   		justify-content: center;
+  		align-items: center;
+  		background: rgba(0, 0, 0, 0.2);
+			border-radius: 8px;
 
   		button{
-  			transform:  rotate(-180deg);
+  			// transform:  rotate(90deg);
 				background: transparent;
   			border: none;
   			outline: none;
@@ -1813,7 +1826,7 @@ filter: contrast(100%);
 
   		svg{
   			color: whitesmoke;
-  			font-size: 21px;
+  			font-size: 25px;
   			transition: 150ms linear;
   		}
 
@@ -1828,6 +1841,8 @@ filter: contrast(100%);
 
   	}
   }
+
+}
 
   .textActive{
   	width: 100%;
