@@ -57,12 +57,13 @@ const HomePage = () => {
 
 const { t } = useTranslation();
 
-const start_param = new URLSearchParams(window.Telegram.WebApp?.initData).get('room') || null;
+const start_param = new URLSearchParams(window.Telegram.WebApp?.initData).get('start_param') || null;
+const isValidRoom = start_param && /^\d{1,6}$/.test(start_param)
 
 useEffect(() => {
     const isRedirected = sessionStorage.getItem('redirected');
 
-    if (start_param !== null && !isRedirected) {
+    if (isValidRoom && start_param !== null && !isRedirected) {
         sessionStorage.setItem('redirected', 'true');
         window.location.href = `/room/${start_param}`;
     }

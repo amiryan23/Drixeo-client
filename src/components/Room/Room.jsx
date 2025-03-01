@@ -74,7 +74,7 @@ const Room = () => {
   const [isCooldown, setIsCooldown] = useState(false)
   const [openSearchModal,setOpenSearchModal] = useState(false)
   const [textareaActive,setTextareaActive] = useState(false)
-  const [videoIdPlayer,setVideoIdPlayer] = useState(false)
+  
   
 
   const {  thisUser  } = useContext(MyContext);
@@ -107,7 +107,6 @@ useEffect(() => {
   newSocket.on('roomUpdated', (data) => {
   const decryptRoomData = decryptData(data.encryptedData,process.env.REACT_APP_SECRET_KEY_CODE)
     setRoomData(decryptRoomData);
-    setVideoIdPlayer(extractVideoId(decryptRoomData?.videoLink))
   if (decryptRoomData.videoLink !== prevVideoLink.current) {
     setIsReady(false);
     prevVideoLink.current = decryptRoomData.videoLink
@@ -130,20 +129,10 @@ const handleVisibilityChange = () => {
     document.removeEventListener('visibilitychange', handleVisibilityChange);
     newSocket.disconnect();
   };
-}, [roomId, thisUserId , token]);
+}, [token]);
 
 
 
-useEffect(()=>{
-  if(roomData?.videoLink){
-    setTimeout(()=>{
-      setVideoIdPlayer(null)
-    },200)
-    setTimeout(()=>{
-      setVideoIdPlayer(extractVideoId(roomData?.videoLink))
-    },500)
-  }
-},[roomData?.videoLink])
 
 
 const handleSendMessage = () => {
@@ -236,8 +225,6 @@ useEffect(() => {
   if (isReady) {
     let syncInterval; 
 
-    const event = new Event('click')
-    document.body.dispatchEvent(event)
 
     const syncVideo = () => {
       const currentTime = player.getCurrentTime(); 
@@ -524,7 +511,7 @@ const handleInputChange = (e) => {
 
 
 const handleLoading = useCallback(() => {
-  setTimeout(()=>{setReadyVideo((prevReadyVideo)=>prevReadyVideo + 25)},6000)
+  setTimeout(()=>{setReadyVideo((prevReadyVideo)=>prevReadyVideo + 50)},6000)
          if(roomData?.owner !== ''  && readyVideo < 100){
   setReadyVideo((prevReadyVideo)=>prevReadyVideo + 50)
 }
@@ -536,7 +523,7 @@ const handleLoading = useCallback(() => {
       <div className={s.content1}>
         <span className={s.item1}>
         {t("Room")}:{roomData?.roomId}
-        <Link to={`https://t.me/share/url?url=${`https://t.me/drixeo_bot/app?room=${roomId}`}&text=${`${t("Hello! Watch with us. Room")} ${roomId}`}`} 
+        <Link to={`https://t.me/share/url?url=${`https://t.me/drixeo_bot/app?startapp=${roomId}`}&text=${`${t("Hello! Watch with us. Room")} ${roomId}`}`} 
         onClick={()=>{window.Telegram.WebApp.HapticFeedback.notificationOccurred("success");}}><FaShareSquare/></Link>
         </span>
         <span onClick={()=>{
@@ -552,11 +539,12 @@ const handleLoading = useCallback(() => {
        } 
       }}
       >
-      <YouTube
-        videoId={videoIdPlayer} 
+      {roomData?.videoLink && <YouTube
+        videoId={extractVideoId(roomData?.videoLink)} 
         ref={playerRef}
         onReady={(event) => {
           playerRef.current = event.target;
+          event.target.seekTo(roomData?.videoSettings?.currentTime, true)
           handleLoading()
         }}
         onPlay={() => roomData?.owner === thisUserId && handleVideoControl('play')}
@@ -565,8 +553,7 @@ const handleLoading = useCallback(() => {
         opts={{
           playerVars: {
             enablejsapi:1,
-            origin:window.location.origin,
-            autoplay: 0,
+            autoplay: 1,
             controls: 1,
             playsinline:1
           },
@@ -575,7 +562,7 @@ const handleLoading = useCallback(() => {
           pointerEvents: roomData?.owner === thisUserId ? 'auto' : 'none', 
         }}
 
-      />
+      />}
       </div>
       <div className={s.content3}>
         <span className={s.item1}><FaUser/> {roomData?.members?.length}/{roomData?.limit}</span>

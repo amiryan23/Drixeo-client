@@ -1699,6 +1699,7 @@ filter: contrast(100%);
   	flex-direction: column;
   	padding-bottom: 15px;
   	background-color: #222;
+  	z-index: 222;
 
 
   .rpylMsgContent{
@@ -1783,7 +1784,7 @@ filter: contrast(100%);
   	transition: 150ms linear;
   	border-radius: 0px 0px 7px 7px;
   	border-bottom: 1px solid rgba(256, 256, 256, 0.2);
-  	z-index: 222;
+  	
 
   	img{
   		width: 35px;

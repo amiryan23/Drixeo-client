@@ -26,7 +26,7 @@ const token = sessionStorage.getItem('__authToken');
 const thisUserId = window.Telegram.WebApp.initDataUnsafe?.user?.id
 
 	useEffect(() => {
-    if(token){
+    if(!token) return
     axios
       .get(`${process.env.REACT_APP_API_URL}/api/gifts`,{
     
@@ -42,8 +42,8 @@ const thisUserId = window.Telegram.WebApp.initDataUnsafe?.user?.id
       .catch((err) => {
         console.error('Ошибка при получении подарков:', err);
       });
-    }
-  }, []);
+    
+  }, [token]);
 
 
 const giftList = gifts
