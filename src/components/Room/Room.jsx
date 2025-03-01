@@ -294,6 +294,7 @@ const handleReadyClick = () => {
 
       document.body.dispatchEvent(event)
       player.playVideo();
+      player.unMute();
  
 
     
@@ -554,6 +555,7 @@ const handleLoading = useCallback(() => {
           playerVars: {
             enablejsapi:1,
             autoplay: 1,
+            mute: 1,
             controls: 1,
             playsinline:1
           },
