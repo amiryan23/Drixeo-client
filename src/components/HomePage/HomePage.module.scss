@@ -19,25 +19,7 @@
 	align-items: center;
 
 
-	.headerContent1{
-		width: 100px;
-		padding: 5px;
-		background-color: rgba(0, 0, 0, 0.4);
-		border-radius: 10px;
-		display: flex;
-		justify-content: center;
-		gap: 4px;
-		align-items: center;
-		color: whitesmoke;
-		font-weight: bold;
-		font-size: 12px;
-		margin-left: 10px;
-		opacity: 0.7;
-		
-				svg{
-					margin-top:3px;
-				}
-	}
+
 
 	.headerContent2{
 
@@ -146,16 +128,19 @@
 		flex: 1;
 		width: 100%;
 		height: 250px;
-		// background-color: whitesmoke
 		display:flex;
 		flex-direction: column;
 		gap: 10px;
 		justify-content: center;
 		align-items: center;
+		overflow-y:scroll ;
+		scroll-behavior: smooth;
 
 		.content1{
 			width: 130px;
+			min-width: 130px;
 			height: 130px;
+			min-height: 130px;
 			border-radius: 50%;
 			padding: 3px;
 			background: linear-gradient(180deg, rgba(78,141,246,0.7) 0%, rgba(178,121,201,0.7) 100%);
@@ -318,6 +303,88 @@ span{
 					transform: scale(0.95);
 					transition: 200ms linear;
 				}
+
+			.btnTasks{
+			padding: 9px 55px 9px 55px;
+			background: linear-gradient(180deg, rgba(137,115,237,0.6) 0%, rgba(36,101,213,0.6) 100%);
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+			gap: 7px;
+			color: whitesmoke;
+			border-radius: 7px 15px 7px 15px;
+			font-size: 13px;
+			font-weight: bold;
+			position: relative;
+			border:none;
+			outline: none;
+			transition: 200ms linear;
+			position: relative;
+
+.arrowUp{
+	position: absolute;
+	left: 5px;
+	bottom: 0;
+	transform: rotate(0deg);
+	transition: 250ms linear;
+
+	svg{
+		font-size: 30px;
+	}
+}
+
+.activeArrow{
+	color: #222;
+	transform: rotate(-180deg);
+	transition: 250ms linear;	
+}
+
+span{
+	  position: absolute;
+  top: 0;
+  left:0;
+  right: 0;
+  bottom: 0;
+  border-radius: 7px 15px 7px 15px;
+.skeleton {
+  position: absolute;
+  top: 0;
+  left:0;
+  right: 0;
+  bottom: 0;
+  background: transparent; 
+
+}
+
+}
+
+.newTasks{
+	position: absolute;
+	right: 5px;
+	top: 5px;
+	width: 10px;
+	height: 10px;
+	border-radius: 50% 2px 50% 50%;
+	background-color: #0088cc;
+	opacity:1;
+	filter: contrast(200%);
+}				
+			}
+
+			.btnTasks:active{
+					background-color: rgba(256, 256, 256, 0.7);
+					color:rgba(0, 0, 0, 0.5);
+					transform: scale(0.95);
+					transition: 200ms linear;
+				}		
+
+		.earnContent{
+			width: 100%;
+			height: 7px;
+			max-height: auto;
+			padding: 0px 8px 5px 8px; 
+		}
 	}
 
 	.joinModale{

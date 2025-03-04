@@ -1,5 +1,5 @@
 import s from './HomePage.module.scss'
-import React,{useState,useContext,useEffect,useRef} from 'react'
+import React,{useState,useContext,useEffect,useRef,useCallback} from 'react'
 import { MyContext } from './../../context/Context'
 import { motion,AnimatePresence} from 'framer-motion';
 import { HiUsers } from "react-icons/hi2";
@@ -20,12 +20,17 @@ import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { IoLockClosed } from "react-icons/io5";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch , FaTasks} from "react-icons/fa";
 import YouTubeSearch from './YouTubeSearch/YouTubeSearch'
 import { FaCheck } from "react-icons/fa6";
+import { MdArrowDropUp } from "react-icons/md"
+import EarnModal from './EarnModal/EarnModal'
+import DrixeoStar from './../../helpers/drixeoStar'
+import PointContent from './PointContent/PointContent'
+
 
 const HomePage = () => {
-	const {  thisUser,setThisUser,loader } = useContext(MyContext);
+	const {  thisUser,setThisUser,loader,tasks,setTasks } = useContext(MyContext);
 
 	const [joinOpenModal,setJoinOpenModal] = useState(false)
 	const [createOpenModal,setCreateOpenModal] = useState(false)
@@ -43,6 +48,8 @@ const HomePage = () => {
 	const [videoUrl, setVideoUrl] = useState("");
 	const [loadingVideo,setLoadingVideo] = useState(false)
 	const [openSearchModal,setOpenSearchModal] = useState(false)
+	const [openEarn,setOpenEarn] = useState(false)
+	const [newTasksActive,setNewTasksActive] = useState(false)
 
 	const token = sessionStorage.getItem('__authToken');
 
@@ -54,6 +61,7 @@ const HomePage = () => {
 	const premium2 = 1000
 
 	const timerRef = useRef()
+	const containerRef = useRef()
 
 const { t } = useTranslation();
 
@@ -68,6 +76,13 @@ useEffect(() => {
         window.location.href = `/room/${start_param}`;
     }
 }, []);
+
+
+useEffect(()=>{
+	if(tasks){
+		setNewTasksActive(tasks?.every(task=> task.is_completed === true))
+	}
+},[tasks])
 
 
 	 const handleCreateRoom = async () => {
@@ -257,6 +272,7 @@ const formattedDate = `${day}.${month}.${year}`;
 
 
 
+
 	return ( 
 		!loader ?
 		<div className={s.megaContainer}>
@@ -264,25 +280,10 @@ const formattedDate = `${day}.${month}.${year}`;
 					initial={{ opacity: 0 ,y: -50}}
         			animate={{ opacity: 1 ,y: 0 }} 
 					transition={{ duration: 0.5 }}>
-					<div className={s.headerContent1}>
-					Soon
-    <svg width="25" height="25" viewBox="0 0 24 24">
-      <defs>
-        <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="20%" stopColor="rgba(137,115,237,1)" />
-          <stop offset="75%" stopColor="rgba(36,101,213,1)" />
-        </linearGradient>
-        <mask id="mask1">
-          <TiStarFullOutline size={20} style={{ fill: "white" }} />
-        </mask>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#grad1)" mask="url(#mask1)" />
-    </svg>
-					</div>
+					<PointContent thisUser={thisUser} />
 					<div className={s.headerContent2}>
 		<AnimatePresence>
-		{openUserSettings && <motion.div key="settings" exit={{ opacity: 0,x:100,scale: 1,rotateZ: 0 }}
-					// onClick={()=>{setOpenUserSettings(false)}}			       
+		{openUserSettings && <motion.div key="settings" exit={{ opacity: 0,x:100,scale: 1,rotateZ: 0 }}		       
 				    initial={{ opacity: 0 ,x: 100,scale: 1,rotateZ: 0}}
         			animate={{ opacity: 1 ,x: 0,scale: 1.5,rotateZ: 360 }} 
 					transition={{ duration: 0.5 }}
@@ -306,20 +307,16 @@ const formattedDate = `${day}.${month}.${year}`;
 						window.Telegram.WebApp.HapticFeedback.notificationOccurred("success");
         			}}><LuSettings/></motion.div>}
         </AnimatePresence>
-        {thisUser?.is_premium !== 1
-        ? <div className={`${s.premiumIcon} ${s.disabled}`} 
-        onClick={()=>{
-        	toast.info(t('You are not a premium user'),{
-        		icon:<RiVipCrownFill size="25" color="#999"/>
-        	})
-        	window.Telegram.WebApp.HapticFeedback.notificationOccurred("warning");
-        }}><RiVipCrownFill/><span>{t("Premium")}</span></div>
-        : <div className={s.premiumIcon}
-         onClick={()=>{openUserSettings ? setOpenUserSettings(false) : setOpenUserSettings(true)}}><RiVipCrownFill/><span>{t('Premium')}</span></div>
-		}
+         <div className={s.premiumIcon}
+         onClick={()=>{openUserSettings ? setOpenUserSettings(false) : setOpenUserSettings(true)}}>
+         <RiVipCrownFill 
+         color={thisUser?.is_premium !== 1 && "#888"}/><span>{t('Premium')}</span>
+         </div>
+		
 		</div>
 		</motion.div>
 			<motion.div className={s.Container}
+							ref={containerRef}
 			        initial={{ opacity: 0 }}
         			animate={{ opacity: 1 }}
         			transition={{ duration: 0.5 }}>
@@ -368,6 +365,29 @@ const formattedDate = `${day}.${month}.${year}`;
 				flickerSpeed={'slow'}
 				/>
 				{thisUser?.is_premium === 1 ? t('You are a premium user') : t('Become a premium user')}</button>
+				<button className={s.btnTasks} onClick={()=>{
+					if(openEarn){
+					setOpenEarn(false)
+					}else {
+					setOpenEarn(true)	
+					setTimeout(()=>{
+						 containerRef.current.scrollTop = containerRef.current.scrollHeight
+					},500)		
+					}
+					window.Telegram.WebApp.HapticFeedback.notificationOccurred("success");
+				}}>
+					<Skeleton
+          className={s.skeleton}
+          baseColor="rgba(256,256,256,0)"
+          highlightColor="rgba(256,256,256,0.1)"
+          duration={5}/> 
+          <div className={openEarn ? `${s.activeArrow} ${s.arrowUp}` : s.arrowUp}><MdArrowDropUp/></div>
+          <FaTasks/> Earn
+          {!newTasksActive && <div className={s.newTasks}></div>}
+          </button>
+          <div className={s.earnContent}>
+          <EarnModal openEarn={openEarn} setOpenEarn={setOpenEarn} toast={toast} t={t}/>
+          </div>
 			</motion.div>
 			<Menu/>
 			<ProjectInfo/>

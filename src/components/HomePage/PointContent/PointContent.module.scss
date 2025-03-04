@@ -1,0 +1,27 @@
+	.pointContent{
+		width: 100px;
+		padding: 5px;
+		background-color: rgba(0, 0, 0, 0.4);
+		border-radius: 10px;
+		display: flex;
+		justify-content: center;
+		gap: 4px;
+		align-items: center;
+		color: whitesmoke;
+		font-weight: bold;
+		font-size: 12px;
+		margin-left: 10px;
+		opacity: 1;
+		transition: 1200ms linear;
+		
+				svg{
+					margin-top:3px;
+				}
+	}
+
+	.animPoints{
+		transform: scale(0.85);
+		color: #222;
+		background-color: rgba(0, 156, 0, 0.3);
+		transition: 1200ms linear;
+	}

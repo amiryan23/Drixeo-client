@@ -16,6 +16,7 @@ const MyContextProvider = ({ children }) => {
   const [loader,setLoader] = useState(true)
   const [isLoaded,setIsLoaded] = useState(0)
   const [userLevelInfo,setUserLevelInfo] = useState(null)
+  const [tasks,setTasks] = useState(false)
 
 const { i18n } = useTranslation();
 
@@ -80,8 +81,10 @@ useEffect(()=>{
       isLoaded,
       setIsLoaded,
       userLevelInfo,
-      setUserLevelInfo
-        }), [thisUser,activeLink,loader,isLoaded,setIsLoaded,userLevelInfo]);
+      setUserLevelInfo,
+      tasks,
+      setTasks
+        }), [thisUser,activeLink,loader,isLoaded,setIsLoaded,userLevelInfo,tasks]);
 
   return (
     <MyContext.Provider 

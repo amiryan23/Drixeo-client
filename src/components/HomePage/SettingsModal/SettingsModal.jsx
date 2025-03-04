@@ -356,7 +356,13 @@ const profileBg2 = "radial-gradient(circle, rgba(26,113,157,1) 13%, rgba(129,47,
 				</motion.div> }
 				</div>
 				<div className={s.content7}>
-					<button className={s.saveBtn} disabled={loading && true} onClick={updateCustomSettings}>
+				{thisUser?.is_premium !== 1 
+					? <button className={s.disabledBtn} onClick={()=>{
+						toast.info(t('You are not a premium user'),{ 
+         		icon:<RiVipCrownFill size="25" color="#999"/> 
+         	}) 
+					}}>{t("Save")}</button>
+					: <button className={s.saveBtn} disabled={loading && true} onClick={updateCustomSettings}>
 					{loading 
 					? 	
 					<Oval
@@ -368,7 +374,7 @@ const profileBg2 = "radial-gradient(circle, rgba(26,113,157,1) 13%, rgba(129,47,
  			  wrapperStyle={{}}
   			wrapperClass=""
  			 		/>
-					: t("Save")}</button>
+					: t("Save")}</button>}
 					<button className={s.closeBtn} onClick={()=>{setOpenSettingsModal(false)}}>{t("Close")}</button>
 				</div>
 			</motion.div>
