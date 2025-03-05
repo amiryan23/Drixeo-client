@@ -33,6 +33,7 @@ import PremiumModal from './PremiumModal/PremiumModal'
 import {getStyleLevel} from './../../helpers/getMessageStyle'
 import YouTubeSearch from './../HomePage/YouTubeSearch/YouTubeSearch'
 import { FaSearch } from "react-icons/fa";
+import EmojiContent from './EmojiContent/EmojiContent'
 
 
 
@@ -216,11 +217,23 @@ if (roomData?.members.length > roomData?.limit) {
 useEffect(() => {
 
   const player = playerRef.current;
+  const event = new Event("click")
+
+  const handleCustomPlay = () => {
+    if(playerRef.current) {
+      playerRef.current.playVideo()
+    }
+  }
+
+  document.addEventListener("coustomPlay",handleCustomPlay)
+  
 
   if (!player) {
     console.error('Player reference is not available.');
     return;
   }
+
+
 
   if (isReady) {
     let syncInterval; 
@@ -239,11 +252,18 @@ useEffect(() => {
     `YouTubeControl received: action=${roomData?.videoSettings?.action}, currentTime=${roomData?.videoSettings?.currentTime}`
   );
 
+  document.dispatchEvent(event)
+  const state = playerRef.current.getPlayerState()
 
     switch (roomData?.videoSettings?.action) {
       case 'play':
+        if(state !== 1){
+        document.dispatchEvent(event)
         player.seekTo(roomData?.videoSettings?.currentTime, true);
-        player.playVideo();
+        document.dispatchEvent(new Event("coustomPlay"))
+
+
+        }
 
         if (roomData?.owner === thisUserId) {
           syncInterval = setInterval(syncVideo, 3000);
@@ -251,8 +271,11 @@ useEffect(() => {
         break;
 
       case 'pause':
+        if(state !== 2){
+        document.dispatchEvent(event)
         player.seekTo(roomData?.videoSettings?.currentTime, true); 
-        player.pauseVideo(); 
+        player.pauseVideo();
+        } 
         break;
 
       case 'seek':
@@ -269,6 +292,7 @@ useEffect(() => {
 
     return () => {
       if (syncInterval) clearInterval(syncInterval);
+      document.removeEventListener("coustomPlay",handleCustomPlay)
     };
   }
 }, [roomData?.videoSettings?.action, isReady]); 
@@ -287,20 +311,18 @@ const handleVideoControl = (action) => {
 
 const handleReadyClick = () => {
   const player = playerRef.current;
-  const event = new Event('click')
+  const state = player.getPlayerState()
+
   
   if (player && roomData?.videoLink) {
 
-
-      document.body.dispatchEvent(event)
-      player.playVideo();
-      player.unMute();
+      // player.playVideo();
+      setTimeout(()=>{player.unMute();},350)
  
 
     
-    if (roomData?.videoSettings?.action !== "play") {
+    if (roomData?.videoSettings?.action !== "play" && state !== 1) {
       setTimeout(() => {
-    document.body.dispatchEvent(event)
        player.pauseVideo();
       }, 1500); 
     }
@@ -547,6 +569,8 @@ const handleLoading = useCallback(() => {
           playerRef.current = event.target;
           event.target.seekTo(roomData?.videoSettings?.currentTime, true)
           handleLoading()
+      const iframe = event.target.getIframe();
+      iframe.setAttribute("allow", "autoplay");
         }}
         onPlay={() => roomData?.owner === thisUserId && handleVideoControl('play')}
         onPause={() =>roomData?.owner === thisUserId &&  handleVideoControl('pause')}
@@ -556,8 +580,8 @@ const handleLoading = useCallback(() => {
             enablejsapi:1,
             autoplay: 1,
             mute: 1,
-            controls: 1,
-            playsinline:1
+            controls: 1
+            // playsinline:1
           },
         }}
         style={{
@@ -581,6 +605,7 @@ const handleLoading = useCallback(() => {
         </span>
          }
       </div>
+      <EmojiContent socket={socket} roomId={roomId} />
       <AnimatePresence>
       {openSettings && roomData?.owner === thisUserId && <motion.div className={s.settingsContent} key="box" exit={{ opacity: 0,y: -250 }}
               initial={{ opacity: 0 ,y: -250}}
