@@ -1,10 +1,14 @@
 import s from './PointContent.module.scss'
 import DrixeoStar from './../../../helpers/drixeoStar'
 import CountUp from 'react-countup';
-import {useEffect,useRef} from 'react'
+import {useEffect,useRef,useContext} from 'react'
+import { MyContext } from './../../../context/Context'
 
 
-const PointContent = ({thisUser}) => {
+
+const PointContent = () => {
+
+	const {  thisUser  } = useContext(MyContext);
 
 	const animPoints = useRef()
 	const timerRef = useRef()

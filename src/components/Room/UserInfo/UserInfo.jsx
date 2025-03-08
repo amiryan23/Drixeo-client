@@ -9,14 +9,15 @@ import { FiGift } from "react-icons/fi";
 import { IoMdEyeOff } from "react-icons/io";
 import giftIcon from './../../../assets/giftIcon.json'
 import {useEffect,useRef} from 'react'
-import { Player } from '@lordicon/react';
+
+import Lottie from 'lottie-react';
 
 const UserInfo = ({userInfo,setUserInfo,roomData,setPremiumModal,infoState,setInfoState,setOpenGiftModal,setOpenGift,thisUser,t}) => {
 
 const playerRef = useRef(null);
 
 useEffect(()=>{
-  playerRef.current?.playFromBeginning();
+  playerRef.current?.play();
 },[userInfo])
 
 const currentLevel = calculateLevel(roomData?.users?.find(user => user?.userId === userInfo)?.exp)
@@ -65,8 +66,7 @@ const thisUserId = window.Telegram.WebApp.initDataUnsafe?.user?.id
           /> 
          }
           {roomData?.users?.find(user=> user?.userId === userInfo)?.id !== thisUser.id && <div className={s.item1} onClick={()=>{setOpenGiftModal(true)}}>
-               {/* <FiGift size="30"/> */}
-          <Player ref={playerRef} icon={giftIcon}/>
+           <Lottie ref={playerRef} animationData={giftIcon} loop={0} style={{ width: '30px', height: '30px' }} />
               </div>}
           </div>
           <div className={s.userInfoContent2}>

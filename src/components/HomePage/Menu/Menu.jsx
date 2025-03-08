@@ -5,7 +5,7 @@ import { IoHome } from "react-icons/io5";
 import {useContext} from 'react'
 import { MyContext } from './../../../context/Context'
 import { useTranslation } from 'react-i18next';
-import { Player } from '@lordicon/react';
+import Lottie from 'lottie-react';
 import { useEffect, useRef } from 'react';
 import homeIcon from './../../../assets/homeIcon.json'
 import roomIcon from './../../../assets/roomIcon.json'
@@ -22,8 +22,8 @@ const Menu = () => {
 	const playerRef2 = useRef(null);
   
     useEffect(() => {
-        playerRef.current?.playFromBeginning();
-        playerRef2.current?.playFromBeginning();
+        playerRef.current?.play();
+        playerRef2.current?.play();
     }, [])
 
 
@@ -35,18 +35,16 @@ const Menu = () => {
 		 to='/' 
 		 className={activeLink === "home" ? `${s.active} ${s.content1}` : s.content1}
 		 onClick={()=>{setActiveLink("home")}}
-		 >   <Player 
-            ref={playerRef} 
-            icon={homeIcon}
-        />{t("Home")}</Link>
+		 > 
+        <Lottie ref={playerRef} animationData={homeIcon} loop={0} style={{ width: '25px', height: '25px' }} />
+        {t("Home")}</Link>
 		 <Link
 		  to='/roomlist' 
 		  className={activeLink === "roomlist" ? `${s.active} ${s.content2}` : s.content2}
 		  onClick={()=>{setActiveLink("roomlist")}}
-		  > <Player 
-            ref={playerRef2} 
-            icon={roomIcon}
-        />{t("Rooms")}</Link>
+		  >
+        <Lottie ref={playerRef2} animationData={roomIcon} loop={0}  style={{ width: '25px', height: '25px' }} />
+        {t("Rooms")}</Link>
 		 </div>
 		</div>
 		)

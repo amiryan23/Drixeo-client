@@ -9,7 +9,7 @@ import { Oval } from 'react-loader-spinner'
 import { useTranslation } from 'react-i18next';
 import ProjectInfo from './../HomePage/ProjectInfo/ProjectInfo'
 import cinemaIcon from './../../assets/cinemaIcon.json'
-import { Player } from '@lordicon/react';
+import Lottie from 'lottie-react';
 
 
 const RoomList = () => {
@@ -183,7 +183,7 @@ const response = await axios.get(`${process.env.REACT_APP_API_URL}/rooms/join/${
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
 		className={s.content2}>
- 			<Player ref={playerRef} icon={cinemaIcon} size={190}/>
+		<Lottie ref={playerRef} animationData={cinemaIcon} loop={0}  style={{ width: '190px', height: '190px' }} />
  			 <input 
  			 placeholder="Search Room..." 
  			 value={searchRoom || null} 

@@ -23,7 +23,7 @@ const token = sessionStorage.getItem('__authToken');
 
 const thisUserId = window.Telegram.WebApp.initDataUnsafe?.user?.id
 
-const telegramPremium =  window.Telegram.WebApp.initDataUnsafe?.user?.is_premium
+const telegramPremium =  window.Telegram.WebApp.initDataUnsafe?.user?.is_premium || null
 
 const fetchTasks = async () => {
   try {

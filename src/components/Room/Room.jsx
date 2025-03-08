@@ -75,6 +75,7 @@ const Room = () => {
   const [isCooldown, setIsCooldown] = useState(false)
   const [openSearchModal,setOpenSearchModal] = useState(false)
   const [textareaActive,setTextareaActive] = useState(false)
+  const [playerState,setPlayerState] = useState(null)
   
   
 
@@ -214,55 +215,43 @@ if (roomData?.members.length > roomData?.limit) {
   }, [roomData?.blocked,roomData?.chatRoom,giftArray]);
 
 
+
+
+
 useEffect(() => {
-
+  console.log(playerState)
   const player = playerRef.current;
-  const event = new Event("click")
-
-  const handleCustomPlay = () => {
-    if(playerRef.current) {
-      playerRef.current.playVideo()
-    }
-  }
-
-  document.addEventListener("coustomPlay",handleCustomPlay)
-  
-
   if (!player) {
-    console.error('Player reference is not available.');
+    console.error("Player reference is not available.");
     return;
   }
 
 
 
   if (isReady) {
-    let syncInterval; 
-
+    let syncInterval;
 
     const syncVideo = () => {
-      const currentTime = player.getCurrentTime(); 
-      socket.emit('youtubeControl', { 
-        roomId, 
-        action: 'play', 
-        currentTime 
+      const currentTime = player.getCurrentTime();
+      socket.emit("youtubeControl", {
+        roomId,
+        action: "play",
+        currentTime,
       });
     };
 
-  console.log(
-    `YouTubeControl received: action=${roomData?.videoSettings?.action}, currentTime=${roomData?.videoSettings?.currentTime}`
-  );
+    console.log(
+      `YouTubeControl received: action=${roomData?.videoSettings?.action}, currentTime=${roomData?.videoSettings?.currentTime}`
+    );
 
-  document.dispatchEvent(event)
-  const state = playerRef.current.getPlayerState()
+    const state = player.getPlayerState();
 
     switch (roomData?.videoSettings?.action) {
-      case 'play':
-        if(state !== 1){
-        document.dispatchEvent(event)
-        player.seekTo(roomData?.videoSettings?.currentTime, true);
-        document.dispatchEvent(new Event("coustomPlay"))
-
-
+      case "play":
+        if (state !== 1) {
+          player.seekTo(roomData?.videoSettings?.currentTime, true);
+          playerRef.current.playVideo(); 
+          setPlayerState(state)
         }
 
         if (roomData?.owner === thisUserId) {
@@ -270,32 +259,31 @@ useEffect(() => {
         }
         break;
 
-      case 'pause':
-        if(state !== 2){
-        document.dispatchEvent(event)
-        player.seekTo(roomData?.videoSettings?.currentTime, true); 
-        player.pauseVideo();
-        } 
+      case "pause":
+        if (state !== 2) {
+          player.seekTo(roomData?.videoSettings?.currentTime, true);
+          player.pauseVideo();
+          
+        }
         break;
 
-      case 'seek':
-        player.seekTo(roomData?.videoSettings?.currentTime, true); 
+      case "seek":
+        player.seekTo(roomData?.videoSettings?.currentTime, true);
         break;
 
-      case 'end':
-        player.stopVideo(); 
+      case "end":
+        player.stopVideo();
         break;
 
       default:
-        console.error('Unknown action:', roomData?.videoSettings?.action);
+        console.error("Unknown action:", roomData?.videoSettings?.action);
     }
 
     return () => {
       if (syncInterval) clearInterval(syncInterval);
-      document.removeEventListener("coustomPlay",handleCustomPlay)
     };
   }
-}, [roomData?.videoSettings?.action, isReady]); 
+}, [roomData?.videoSettings?.action, isReady]);
 
 
 const handleVideoControl = (action) => {
@@ -567,12 +555,16 @@ const handleLoading = useCallback(() => {
         ref={playerRef}
         onReady={(event) => {
           playerRef.current = event.target;
+          setPlayerState(playerRef.current.getPlayerState())
           event.target.seekTo(roomData?.videoSettings?.currentTime, true)
           handleLoading()
       const iframe = event.target.getIframe();
       iframe.setAttribute("allow", "autoplay");
         }}
-        onPlay={() => roomData?.owner === thisUserId && handleVideoControl('play')}
+        onPlay={() => {
+          if(roomData?.owner === thisUserId)  handleVideoControl('play')
+            setPlayerState(playerRef.current.getPlayerState())
+        }}
         onPause={() =>roomData?.owner === thisUserId &&  handleVideoControl('pause')}
         onEnd={() =>roomData?.owner === thisUserId && handleVideoControl('end')}
         opts={{
@@ -581,11 +573,11 @@ const handleLoading = useCallback(() => {
             autoplay: 1,
             mute: 1,
             controls: 1
-            // playsinline:1
+           
           },
         }}
         style={{
-          pointerEvents: roomData?.owner === thisUserId ? 'auto' : 'none', 
+          pointerEvents:playerState === 2 ? 'auto' : roomData?.owner === thisUserId ? 'auto' : 'none', 
         }}
 
       />}
