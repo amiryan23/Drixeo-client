@@ -534,7 +534,7 @@ const handleLoading = useCallback(() => {
 },[roomData?.owner])
 
 const shouldShowDiv = useMemo(() => {
-  return roomData?.videoSettings?.action === "play" && playerState === 2
+  return roomData?.videoSettings?.action === "pause" && playerState === 2
 }, [roomData?.videoSettings?.action, playerState]);
 
 
@@ -599,7 +599,7 @@ const shouldShowDiv = useMemo(() => {
       animate={{ opacity: 1 ,scale:1}}
       exit={{opacity:0}}
       transition={{ duration: 0.4 }}>
-      Please press play to sync room<FaAnglesUp/>
+      {t("Press Play to synchronize")}<FaAnglesUp/>
       </motion.span></div>}
       </AnimatePresence>
       <div className={s.content3}>
