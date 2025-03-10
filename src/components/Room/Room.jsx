@@ -534,7 +534,7 @@ const handleLoading = useCallback(() => {
 },[roomData?.owner])
 
 const shouldShowDiv = useMemo(() => {
-  return roomData?.videoSettings?.action === "pause" && playerState === 2
+  return roomData?.videoSettings?.action === "play" && playerState === 2
 }, [roomData?.videoSettings?.action, playerState]);
 
 
