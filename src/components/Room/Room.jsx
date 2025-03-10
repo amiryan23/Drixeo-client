@@ -1,7 +1,7 @@
 import s from './Room.module.scss'
 import { useParams,Link } from 'react-router-dom';
 import axios from 'axios';
-import React,{useState,useEffect,useContext,useRef,useCallback } from 'react'
+import React,{useState,useEffect,useContext,useRef,useCallback,useMemo } from 'react'
 import { MyContext } from './../../context/Context'
 import io from 'socket.io-client';
 import { FaUser,FaCircleArrowUp,FaCheck } from "react-icons/fa6";
@@ -34,12 +34,14 @@ import {getStyleLevel} from './../../helpers/getMessageStyle'
 import YouTubeSearch from './../HomePage/YouTubeSearch/YouTubeSearch'
 import { FaSearch } from "react-icons/fa";
 import EmojiContent from './EmojiContent/EmojiContent'
-
+import {FaAnglesUp} from 'react-icons/fa6'
 
 
 
 const Room = () => {
   const { roomId } = useParams();
+
+  const authToken = sessionStorage.getItem('__authToken');
 
     const [roomData, setRoomData] = useState({
     owner: '',
@@ -78,33 +80,35 @@ const Room = () => {
   const [playerState,setPlayerState] = useState(null)
   
   
+  
 
-  const {  thisUser  } = useContext(MyContext);
+  const {  thisUser , token  } = useContext(MyContext);
 
     const { t } = useTranslation();
-
-  const token = sessionStorage.getItem('__authToken');
-
 
   const chatContainerRef = useRef(null);
   const playerRef = useRef(null)
   const prevVideoLink = useRef(roomData?.videoLink);
   const textAreaRef = useRef()
+  const hasJoinedRoom = useRef(false);
 
 
 const thisUserId = window.Telegram.WebApp.initDataUnsafe?.user?.id
 
+const hasJoined = useRef(false);
+
 useEffect(() => {
-  if (!token) return;
+  if (!token ) return;
 
   const newSocket = io(process.env.REACT_APP_API_URL , {
     query: { token },
   });
   setSocket(newSocket);
 
-  if(!roomData?.blocked.includes(thisUserId)){
+
   newSocket.emit('joinRoom', { roomId, userId: thisUserId });
-  }
+
+  
 
   newSocket.on('roomUpdated', (data) => {
   const decryptRoomData = decryptData(data.encryptedData,process.env.REACT_APP_SECRET_KEY_CODE)
@@ -116,6 +120,8 @@ useEffect(() => {
   });
 
 const handleVisibilityChange = () => {
+
+
     if (document.visibilityState === 'hidden') {
       newSocket.emit('leaveRoom', { roomId, userId: thisUserId });
     } else if (document.visibilityState === 'visible') {
@@ -219,7 +225,6 @@ if (roomData?.members.length > roomData?.limit) {
 
 
 useEffect(() => {
-  console.log(playerState)
   const player = playerRef.current;
   if (!player) {
     console.error("Player reference is not available.");
@@ -528,6 +533,11 @@ const handleLoading = useCallback(() => {
 }
 },[roomData?.owner])
 
+const shouldShowDiv = useMemo(() => {
+  return roomData?.videoSettings?.action === "play" && playerState === 2
+}, [roomData?.videoSettings?.action, playerState]);
+
+
  return (
     <div className={s.megaContainer}>
     <ReadyModal isReady={isReady} handleReadyClick={handleReadyClick} readyVideo={readyVideo} t={t} />
@@ -582,6 +592,16 @@ const handleLoading = useCallback(() => {
 
       />}
       </div>
+      <AnimatePresence>
+      {shouldShowDiv && <div className={s.playSyncVideo}>
+      <motion.span className={s.item}
+      initial={{ opacity: 0 ,scale:0.75}}
+      animate={{ opacity: 1 ,scale:1}}
+      exit={{opacity:0}}
+      transition={{ duration: 0.4 }}>
+      Please press play to sync room<FaAnglesUp/>
+      </motion.span></div>}
+      </AnimatePresence>
       <div className={s.content3}>
         <span className={s.item1}><FaUser/> {roomData?.members?.length}/{roomData?.limit}</span>
         <span className={s.item2}>
@@ -707,7 +727,7 @@ const handleLoading = useCallback(() => {
   <motion.div 
       initial={{ opacity: 0 ,y: 50}}
       animate={{ opacity: 1 ,y: 0 }}
-      transition={{ duration: 0.5 }} 
+      transition={{ duration: 0.19 }} 
       className={s.chatContent} 
       key={chat?.id}
       id={`msg${chat?.id}`}>

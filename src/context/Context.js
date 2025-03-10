@@ -17,6 +17,7 @@ const MyContextProvider = ({ children }) => {
   const [isLoaded,setIsLoaded] = useState(0)
   const [userLevelInfo,setUserLevelInfo] = useState(null)
   const [tasks,setTasks] = useState(false)
+  const [token,setToken] = useState(null)
 
 const { i18n } = useTranslation();
 
@@ -44,6 +45,7 @@ const tg = window.Telegram.WebApp
       .then(response => {
         const token = response.data.token;
         sessionStorage.setItem('__authToken', token);
+        setToken(token)
 
         const userData = response.data.userData
 
@@ -83,8 +85,9 @@ useEffect(()=>{
       userLevelInfo,
       setUserLevelInfo,
       tasks,
-      setTasks
-        }), [thisUser,activeLink,loader,isLoaded,setIsLoaded,userLevelInfo,tasks]);
+      setTasks,
+      token
+        }), [thisUser,activeLink,loader,isLoaded,setIsLoaded,userLevelInfo,tasks,token]);
 
   return (
     <MyContext.Provider 
