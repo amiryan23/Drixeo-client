@@ -35,7 +35,8 @@ import YouTubeSearch from './../HomePage/YouTubeSearch/YouTubeSearch'
 import { FaSearch } from "react-icons/fa";
 import EmojiContent from './EmojiContent/EmojiContent'
 import {FaAnglesUp} from 'react-icons/fa6'
-
+import VideoPlayer from './../HomePage/VideoPlayer/VideoPlayer'
+import { Oval } from 'react-loader-spinner'
 
 
 const Room = () => {
@@ -304,6 +305,13 @@ const handleVideoControl = (action) => {
 
 const handleReadyClick = () => {
   const player = playerRef.current;
+  setIsReady(true);
+
+    if (!player) {
+    console.error("Player reference is not available.");
+    return;
+  }
+
   const state = player.getPlayerState()
 
   
@@ -320,7 +328,7 @@ const handleReadyClick = () => {
       }, 1500); 
     }
 
-    setIsReady(true);
+    
   }
 };
 
@@ -560,7 +568,9 @@ const shouldShowDiv = useMemo(() => {
        } 
       }}
       >
-      {roomData?.videoLink && <YouTube
+      {roomData?.videoLink 
+      ? roomData?.videoLink?.startsWith("http") && !roomData?.videoLink?.includes(process.env.REACT_APP_API_URL)
+      ? (<YouTube
         videoId={extractVideoId(roomData?.videoLink)} 
         ref={playerRef}
         onReady={(event) => {
@@ -590,7 +600,9 @@ const shouldShowDiv = useMemo(() => {
           pointerEvents:playerState === 2 ? 'auto' : roomData?.owner === thisUserId ? 'auto' : 'none', 
         }}
 
-      />}
+      />)
+      : <VideoPlayer roomData={roomData} socket={socket} roomId={roomId} isReady={isReady} handleLoading={handleLoading} />
+      : <p><Oval visible={true} height="50"  width="50"  color="whitesmoke" ariaLabel="oval-loading" wrapperStyle={{}} wrapperClass="" /> </p>}
       </div>
       <AnimatePresence>
       {shouldShowDiv && <div className={s.playSyncVideo}>
@@ -629,7 +641,7 @@ const shouldShowDiv = useMemo(() => {
             <button className={s.searchBtn} onClick={()=>{setOpenSearchModal(true)}}><FaSearch />{t("Search on YouTube")}</button>
             <span className={s.item1}>
             {t("Link")}:
-            <input placeholder={roomData?.videoLink} value={newVideoId} type="text"
+            <input placeholder={!roomData?.videoLink?.startsWith("http") && roomData?.videoLink} value={newVideoId} type="text"
             autoCorrect="off"  
             spellCheck="false" 
             autoComplete="off"
@@ -1110,7 +1122,7 @@ const shouldShowDiv = useMemo(() => {
      <GiftSettings openGift={openGift} setOpenGift={setOpenGift} />
      <UserModal openUserModal={openUserModal} setOpenUserModal={setOpenUserModal}/>
      <UserLevelInfo />
-     <DeleteModal deleteModal={deleteModal} setDeleteModal={setDeleteModal} roomId={roomId} userId={thisUserId}/>
+     <DeleteModal roomData={roomData} deleteModal={deleteModal} setDeleteModal={setDeleteModal} roomId={roomId} userId={thisUserId}/>
      <YouTubeSearch openSearchModal={openSearchModal} setOpenSearchModal={setOpenSearchModal} isRoom={true} handleVideoIdChange={handleVideoIdChange} newVideoId={newVideoId} setNewVideoId={setNewVideoId}/>
 <ToastContainer
 className={s.notificContainer}

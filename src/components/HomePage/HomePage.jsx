@@ -27,6 +27,7 @@ import { MdArrowDropUp } from "react-icons/md"
 import EarnModal from './EarnModal/EarnModal'
 import DrixeoStar from './../../helpers/drixeoStar'
 import PointContent from './PointContent/PointContent'
+import UploadVideo from './UploadVideo/UploadVideo'
 
 
 const HomePage = () => {
@@ -50,10 +51,10 @@ const HomePage = () => {
 	const [openSearchModal,setOpenSearchModal] = useState(false)
 	const [openEarn,setOpenEarn] = useState(false)
 	const [newTasksActive,setNewTasksActive] = useState(false)
+	const [savedLink,setSavedLink] = useState(null)
+
 
 	const token = sessionStorage.getItem('__authToken');
-
-	const savedLink = sessionStorage.getItem('__YoutubeLinkVideo')
 
 	const thisUserId = window.Telegram.WebApp.initDataUnsafe?.user?.id
 
@@ -90,9 +91,9 @@ useEffect(()=>{
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/rooms/create-room`, {
         limit: limite,
-        videoLink: videoLink || savedLink,
-        is_public:isPublic,
-        description:description,
+        videoLink: videoLink || savedLink || videoUrl,
+        is_public:videoUrl ? false : isPublic,
+        description:videoUrl ? "Room" : description,
         userId: thisUserId,
       },
       { headers: {
@@ -254,7 +255,7 @@ const formattedDate = `${day}.${month}.${year}`;
   const handleInputChange = (e) => {
 
   	if(savedLink){
-  		sessionStorage.removeItem('__YoutubeLinkVideo')
+  		setSavedLink(null)
   	}
 
 
@@ -262,7 +263,7 @@ const formattedDate = `${day}.${month}.${year}`;
     setVideoLink(link);
 
     const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
-    if (youtubeRegex.test(link) ) {
+    if (youtubeRegex.test(link)) {
       setIsDisabled(false);
     } else {
       setIsDisabled(true); 
@@ -440,7 +441,7 @@ const formattedDate = `${day}.${month}.${year}`;
         			transition={{ duration: 0.4 }}
         			>
 					<div className={s.block1}>{t('Create room')}</div>
-					<div className={s.block2}>
+					{!videoUrl  && <div className={s.block2}>
 					{t("Room description")}
 					<input 
 					type="text" 
@@ -451,9 +452,13 @@ const formattedDate = `${day}.${month}.${year}`;
    					window.scrollTo(0, 0);
     				  }}  
 					onChange={(e)=>{setDescription(e.target.value)}}/>
-					</div>
+					</div>}
+					{!videoUrl  &&
 					<div className={s.block2}>
-					<span className={s.ytbSearch}>{t("Youtube video link")}<button onClick={()=>{setOpenSearchModal(true)}}><FaSearch />{t("Search")}</button></span>
+					<span className={s.ytbSearch}>{t("Youtube video link")}
+					<button 
+					disabled={(videoUrl || loadingVideo) && true}
+					onClick={()=>{setOpenSearchModal(true)}}><FaSearch />{t("Search")}</button></span>
 					<input type="text"
 					className={s.linkinput}
 					placeholder={t("Youtube video link")}
@@ -463,14 +468,14 @@ const formattedDate = `${day}.${month}.${year}`;
    					window.scrollTo(0, 0);
     				  }}  		
 					onChange={handleInputChange}/>
-					{!isDisabled && <motion.span 
+					{!isDisabled && (videoLink || savedLink) && <motion.span 
 					className={s.check}
 					initial={{ opacity: 0 ,scale:0.7}}
         	animate={{ opacity: 1 ,scale:1 }}
         	exit={{ opacity: 0 , scale:0.7 }}
         	transition={{ duration: 0.4 }}
 					><FaCheck/></motion.span>}
-					</div>
+					</div>}
 					<div className={s.miniContent}>
 					<div className={s.block2}>{t('Quantity')}
 					<span className={s.maxMembers}> 
@@ -490,6 +495,7 @@ const formattedDate = `${day}.${month}.${year}`;
 						<label className={s.switch}>
   						<input 
   						type="checkbox" 
+  						disabled={(videoUrl || loadingVideo) && true}
   						checked={isPublic} 
   						onChange={(e)=>{
   							setIsPublic(e.target.checked)
@@ -499,13 +505,14 @@ const formattedDate = `${day}.${month}.${year}`;
 						</label>
 					</div>
 					</div>
+					{/* <UploadVideo loadingVideo={loadingVideo} setLoadingVideo={setLoadingVideo} videoUrl={videoUrl} setVideoUrl={setVideoUrl} videoLink={videoLink} setIsDisabled={setIsDisabled} savedLink={savedLink} /> */}
 					<div className={s.rulesBlock}>
 					{t("Before creating, please review the")}
 					<span className={s.terms} onClick={()=>{
 						window.Telegram.WebApp.openLink("https://telegra.ph/Terms-of-Use-for-Drixeo-02-18",{try_instant_view:true})
 					}}>{t("terms of use")}</span></div>
 					<div className={s.block3}>
-					<button className={s.joinBtn} disabled={(loading || isDisabled) && true} onClick={handleCreateRoom}>
+					<button className={s.joinBtn} disabled={(loading || isDisabled)  && true} onClick={handleCreateRoom}>
 					{loading 
 					? 
 			<Oval
@@ -630,7 +637,7 @@ const formattedDate = `${day}.${month}.${year}`;
      </AnimatePresence>
      <SettingsModal openSettingsModal={openSettingsModal} setOpenSettingsModal={setOpenSettingsModal} toast={toast}/>
      <UserModal openUserModal={openUserModal} setOpenUserModal={setOpenUserModal} />
-  	<YouTubeSearch openSearchModal={openSearchModal} setOpenSearchModal={setOpenSearchModal} setIsDisabled={setIsDisabled}/>   
+  	<YouTubeSearch openSearchModal={openSearchModal} setOpenSearchModal={setOpenSearchModal} setIsDisabled={setIsDisabled} setSavedLink={setSavedLink}/>   
 <ToastContainer
 className={s.notificContainer}
 position={openUserModal ? "top-center" : "bottom-center"}

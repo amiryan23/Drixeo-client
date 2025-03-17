@@ -8,7 +8,7 @@ import { FaSearch } from "react-icons/fa";
 import { useTranslation } from 'react-i18next';
 
 
-const YouTubeSearch = ({openSearchModal,setOpenSearchModal,setIsDisabled,isRoom,handleVideoIdChange,newVideoId,setNewVideoId}) => {
+const YouTubeSearch = ({openSearchModal,setOpenSearchModal,setIsDisabled,isRoom,handleVideoIdChange,newVideoId,setNewVideoId,setSavedLink}) => {
   const [query, setQuery] = useState('');
   const [videos, setVideos] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -48,7 +48,7 @@ const YouTubeSearch = ({openSearchModal,setOpenSearchModal,setIsDisabled,isRoom,
     clearTimeout(closeTimer.current)
     if(!isRoom){
     const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
-    sessionStorage.setItem('__YoutubeLinkVideo', videoUrl); 
+    setSavedLink(videoUrl); 
     setOpenSearchModal(false)
     setIsDisabled(false)
   } else {
