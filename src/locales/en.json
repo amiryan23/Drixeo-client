@@ -100,5 +100,10 @@
 	"Enter the video title in the search field and click 'Search'":"Enter the video title in the search field and click 'Search'",
 	"After that, click on the video you want to watch":"After that, click on the video you want to watch",
 	"You have received":"You have received",
-	"Press Play to synchronize":"Press Play to synchronize"
+	"Press Play to synchronize":"Press Play to synchronize",
+	"Upload video (up to 500 MB)":"Upload video (up to 500 MB)",
+	"(up to 1 GB for premium users)":"(up to 1 GB for premium users)",
+	"An error occurred":"An error occurred",
+	"Buy":"Buy",
+	"Sell":"Sell"
 }

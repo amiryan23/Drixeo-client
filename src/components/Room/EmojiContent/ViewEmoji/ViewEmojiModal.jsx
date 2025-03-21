@@ -8,6 +8,7 @@ import { LiaWindowCloseSolid } from "react-icons/lia";
 import { Oval } from 'react-loader-spinner'
 import { FaCheckCircle } from "react-icons/fa";
 import axios from 'axios'
+import { useTranslation } from 'react-i18next';
 
 const ViewEmojiModal = ({openViewModal,setOpenViewModal,thisSticker,setThisSticker,thisUser,setThisUser,stickers,setStickers}) => {
 
@@ -19,6 +20,8 @@ const ViewEmojiModal = ({openViewModal,setOpenViewModal,thisSticker,setThisStick
 const token = sessionStorage.getItem('__authToken');
 
 const thisUserId = window.Telegram.WebApp.initDataUnsafe?.user?.id
+
+const { t } = useTranslation();
 
 	useEffect(()=>{
 		if(thisSticker && playerRef.current){
@@ -89,12 +92,15 @@ const buySticker = async (stickerId) => {
       			<button  onClick={()=>{buySticker(thisSticker.id)}} disabled={(thisUser?.points < thisSticker.price) || loading && true} className={s.buyBtn}>
       			{loading
       			? <Oval visible={true} height="11" width="11" color="whitesmoke" ariaLabel="oval-loading" wrapperStyle={{}} wrapperClass=""  />
-      			: <> Buy 
+      			: <> {t("Buy") }
       			<span className={(thisUser?.points < thisSticker.price) && s.disabled }><DrixeoStar/>{thisSticker.price}</span></>}
       			</button>
       		: <span className={s.buyed}><FaCheckCircle/></span> }
       		</div>
-  s
+			<div className={s.content4}>
+				
+			</div>
+  
       		</motion.div>
       		</motion.div>}
       		</AnimatePresence>

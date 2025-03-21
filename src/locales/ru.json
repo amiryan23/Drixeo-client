@@ -100,7 +100,12 @@
 	"Enter the video title in the search field and click 'Search'":"В поле поиска введите название видео и нажмите «Поиск»",
 	"After that, click on the video you want to watch":"После этого нажмите на видео, которое хотите посмотреть",
 	"You have received":"Вы получили",
-	"Press Play to synchronize":"Нажмите Play, чтобы синхронизироваться"
+	"Press Play to synchronize":"Нажмите Play, чтобы синхронизироваться",
+	"Upload video (up to 500 MB)":"Загружать видео (до 500 МБ)",
+	"(up to 1 GB for premium users)":"(до 1 ГБ для премиум-пользователей)",
+	"An error occurred":"Произошла ошибка",
+	"Buy":"Покупать",
+	"Sell":"Продать"
 
 
 

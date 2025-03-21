@@ -83,9 +83,9 @@ const thisUserId = window.Telegram.WebApp.initDataUnsafe?.user?.id
                animate={{ opacity: 1,x:0 }}
               transition={{ duration: 0.2 }}>
               <div className={s.userGiftMiniContent}>
-              {roomData?.users?.find(user => user?.userId === userInfo)?.gifts.filter(gift=> thisUserId !== userInfo ? gift.hidden !== true : gift).length !== 0
+              {roomData?.users?.find(user => user?.userId === userInfo)?.gifts.filter(gift=> thisUserId !== userInfo ? gift.hidden !== true : gift).filter(gift => gift.is_selled !== true).length !== 0
                ? roomData?.users?.find(user => user?.userId === userInfo)?.gifts
-               .filter(gift=> thisUserId !== userInfo ? gift.hidden !== true : gift)
+               .filter(gift=> thisUserId !== userInfo ? gift.hidden !== true : gift).filter(gift => gift.is_selled !== true)
                .map(gift => <motion.div 
                 className={gift.hidden ? `${s.hiddenGift} ${s.item2}` : s.item2} 
                 key={gift.id}

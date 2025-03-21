@@ -100,7 +100,7 @@ video::-webkit-media-controls-fullscreen-button {
 
 	.playBtn{
 		padding: 7px 35px 7px 35px;
-		background-color: rgba(0, 0, 0, 0.2);
+		background:linear-gradient(180deg, rgba(78,141,246,0.3) 0%, rgba(178,121,201,0.3) 100%);
 		border: 1px solid rgba(256, 256, 256, 0.3);
 		color: whitesmoke;
 		font-size: 20px;
@@ -146,7 +146,7 @@ video::-webkit-media-controls-fullscreen-button {
 	align-items: center;
 	justify-content: flex-start;
 	padding: 5px;
-	background-color: rgba(0, 0, 0, 0.3);
+	background:linear-gradient(180deg, rgba(78,141,246,0.4) 0%, rgba(178,121,201,0.4) 100%);
 	border-radius: 7px;
 
 	.cItem1{

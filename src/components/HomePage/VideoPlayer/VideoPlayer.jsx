@@ -5,6 +5,7 @@ import {FaPlay,FaPause} from "react-icons/fa6"
 import { motion,AnimatePresence} from 'framer-motion';
 import { Oval } from 'react-loader-spinner'
 import { RiForward15Line,RiReplay15Fill} from "react-icons/ri";
+import { GoMute,GoUnmute } from "react-icons/go";
 
 const VideoPlayer = ({roomData,socket,roomId,isReady,handleLoading}) => {
 
@@ -14,6 +15,7 @@ const [hideControl,setHideControl] = useState(false)
 const [currentTime, setCurrentTime] = useState(0);
 const [loading,setLoading] = useState(false)
 const [duration, setDuration] = useState(0);
+const [mute,setMute] = useState(false)
 
 const token = sessionStorage.getItem('__authToken');
 
@@ -21,17 +23,40 @@ const videoRef = useRef(null);
 
 const thisUserId = window.Telegram.WebApp.initDataUnsafe?.user?.id 
 
-// useEffect(()=>{
-// 	setVideoUrl(roomData?.videoLink)
-// },[roomData])
 
   useEffect(() => {
 
-      videoRef.current.src = roomData?.videoLink;
-      videoRef.current.load()
       
 
+  const fetchVideo = async () => {
+    
+    const videoUrl = `${process.env.REACT_APP_API_URL}/api/video/${roomData?.videoLink}`;
+
+    try {
+      const response = await axios.get(videoUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`, 
+        },
+        responseType: 'blob', 
+      });
+
+      const videoBlob = response.data;
+      const videoObjectUrl = URL.createObjectURL(videoBlob);
+
+      
+      videoRef.current.src = videoObjectUrl;
+      videoRef.current.load();
       handleLoading()
+    } catch (error) {
+      console.error('Ошибка при загрузке видео:', error);
+    }
+  };
+
+  if (roomData?.videoLink) {
+    fetchVideo();
+  }
+
+
     
   }, [roomData?.videoLink]);
 
@@ -180,6 +205,16 @@ if (videoRef.current && videoIsPlay) {
     }
   }
 
+  const hnadleMuteUnmute = () => {
+    if(mute){
+      setMute(false)
+      videoRef.current.muted = false
+    } else {
+      setMute(true)
+      videoRef.current.muted = true
+    }
+  }
+
   const visibilityControl = () => {
     clearTimeout(timerRef.current)
     setHideControl(false)
@@ -311,7 +346,7 @@ const nextHandle = () => {
                  <div className={s.progressDuration} style={{width:`${(currentTime/videoRef?.current?.duration) * 100}%`}}></div>
                </span>
             </span>
-              <span className={s.cItem3}>M</span>
+              <span className={s.cItem3} onClick={hnadleMuteUnmute}>{mute ? <GoMute/> : <GoUnmute/> }</span>
             </motion.div>
           </motion.div>}
           </AnimatePresence>

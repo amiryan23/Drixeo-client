@@ -317,7 +317,6 @@ const handleReadyClick = () => {
   
   if (player && roomData?.videoLink) {
 
-      // player.playVideo();
       setTimeout(()=>{player.unMute();},350)
  
 
@@ -641,7 +640,7 @@ const shouldShowDiv = useMemo(() => {
             <button className={s.searchBtn} onClick={()=>{setOpenSearchModal(true)}}><FaSearch />{t("Search on YouTube")}</button>
             <span className={s.item1}>
             {t("Link")}:
-            <input placeholder={!roomData?.videoLink?.startsWith("http") && roomData?.videoLink} value={newVideoId} type="text"
+            <input placeholder={roomData?.videoLink?.startsWith("https") && roomData?.videoLink} value={newVideoId} type="text"
             autoCorrect="off"  
             spellCheck="false" 
             autoComplete="off"

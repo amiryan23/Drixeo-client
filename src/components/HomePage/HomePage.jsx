@@ -505,7 +505,7 @@ const formattedDate = `${day}.${month}.${year}`;
 						</label>
 					</div>
 					</div>
-					{/* <UploadVideo loadingVideo={loadingVideo} setLoadingVideo={setLoadingVideo} videoUrl={videoUrl} setVideoUrl={setVideoUrl} videoLink={videoLink} setIsDisabled={setIsDisabled} savedLink={savedLink} /> */}
+					<UploadVideo loadingVideo={loadingVideo} setLoadingVideo={setLoadingVideo} videoUrl={videoUrl} setVideoUrl={setVideoUrl} videoLink={videoLink} setIsDisabled={setIsDisabled} savedLink={savedLink} />
 					<div className={s.rulesBlock}>
 					{t("Before creating, please review the")}
 					<span className={s.terms} onClick={()=>{

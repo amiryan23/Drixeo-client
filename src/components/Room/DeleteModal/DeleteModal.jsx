@@ -19,7 +19,7 @@ const DeleteModal = ({roomData,deleteModal,setDeleteModal,roomId,userId}) => {
 const handleDeleteVideo = async () => {
   if (!roomData.videoLink) return;
   setLoading(true)
-  const filename = roomData.videoLink.split("/").pop();
+  const filename = roomData.videoLink;
 
   try {
     await axios.delete(`${process.env.REACT_APP_API_URL}/api/delete/${filename}`, {

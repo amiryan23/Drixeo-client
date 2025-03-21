@@ -9,12 +9,15 @@ import { toast  } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { IoMdEyeOff } from "react-icons/io";
 import {encryptData} from './../../../../helpers/decryptData'
+import { Oval } from 'react-loader-spinner'
+
 
 const GiftSettings = ({openGift,setOpenGift}) => {
 
   const [isHidden, setIsHidden] = useState(null);
    const [senderDetails, setSenderDetails] = useState({ senderName: "", senderPhoto: "" });
    const [isCooldown, setIsCooldown] = useState(false);
+   const [loading,setLoading] = useState(false)
 
   const {  thisUser,setThisUser } = useContext(MyContext);
 
@@ -99,6 +102,43 @@ const GiftSettings = ({openGift,setOpenGift}) => {
       console.error("Ошибка при получении данных отправителя:", error);
     }
   };
+
+  const handleSellGift = async () => {
+      setLoading(true)
+
+    try {
+   
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/sell-gift`, {
+        userId: thisUser?.userId,
+        giftId: openGift.id,
+      });
+
+    const discountPrice = Math.round(openGift.price * 0.8); 
+
+
+  setThisUser({
+    ...thisUser,
+    gifts: thisUser.gifts.map(g => 
+      g.id === openGift.id ? { ...g, is_selled: true } : g 
+    ),
+    points: thisUser.points + discountPrice, 
+  });
+   setLoading(false)
+      toast.info(`${t(`You have received`)} ${discountPrice} Drixeo-Stars`,{ 
+            icon:<TiStarFullOutline size="25" color="whitesmoke"/> 
+          })    
+    window.Telegram.WebApp.HapticFeedback.notificationOccurred("success")
+
+   setOpenGift(null)
+
+    } catch (err) {
+      setLoading(false)
+      toast.info(t('An error occurred'));
+    } finally {
+    }
+  };
+
+
 	return (
 		<AnimatePresence>
 		{openGift && <motion.div className={s.megaContainer} key="box" exit={{ opacity: 0 }}>
@@ -137,7 +177,10 @@ const GiftSettings = ({openGift,setOpenGift}) => {
       </defs>
       <rect width="100%" height="100%" fill="url(#grad1)" mask="url(#mask1)" />
     </svg> 
-              <button disabled={true}>Soon</button>
+              <button onClick={handleSellGift} disabled={loading && true}>
+              {loading 
+              ? <Oval visible={true} height="13" width="13" color="whitesmoke" ariaLabel="oval-loading" wrapperStyle={{}} wrapperClass=""/> 
+              : t("Sell")}</button>
               </div>
 			</motion.div>
 		</motion.div> }

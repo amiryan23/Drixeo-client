@@ -3,8 +3,12 @@ import { Oval } from 'react-loader-spinner'
 import { IoLockClosed } from "react-icons/io5";
 import { GoUpload } from "react-icons/go";
 import axios from 'axios'
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState , useContext } from "react";
 import {FaPlay,FaPause} from "react-icons/fa6"
+import { MyContext } from './../../../context/Context'
+import { GoMute,GoUnmute } from "react-icons/go";
+import { useTranslation } from 'react-i18next';
+
 
 const UploadVideo = ({loadingVideo,setLoadingVideo,videoUrl,setVideoUrl,videoLink,setIsDisabled,savedLink}) => {
 
@@ -15,8 +19,16 @@ const [duration, setDuration] = useState(0);
   const [progress, setProgress] = useState(0);
   const [uploadedMB, setUploadedMB] = useState(0);
   const [totalMB, setTotalMB] = useState(0);
+  const [mute,setMute] = useState(false)
+const [thisVideoUrl,setThisVideoUrl] = useState(null)
 
-const token = sessionStorage.getItem('__authToken');
+
+
+const {  thisUser , token } = useContext(MyContext);
+
+const thisUserId = window.Telegram.WebApp.initDataUnsafe?.user?.id
+
+const { t } = useTranslation();
 
 
 const videoRef = useRef(null);
@@ -37,59 +49,59 @@ const videoRef = useRef(null);
 
   }, [videoRef?.current?.duration]);
 
-const handleUploadVideo = async (event) => {
-  setLoadingVideo(true);
-  const file = event.target.files[0];
-  if (!file) return;
+  const handleUploadVideo = async (event) => {
+    setLoadingVideo(true);
+    const file = event.target.files[0];
+    if (!file) return;
+  
+    const MAX_FILE_SIZE_MB = thisUser?.is_premium ? 1000 : 500;
+  
+    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+      alert(`Max file size ${MAX_FILE_SIZE_MB}MB. 1GB for premium users`);
+      setLoadingVideo(false);
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append("video", file);
+  
+    setTotalMB((file.size / (1024 * 1024)).toFixed(2));
+  
+    try {
+      const uploadResponse = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/upload?userId=${thisUserId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setProgress(percentCompleted);
+            setUploadedMB((progressEvent.loaded / (1024 * 1024)).toFixed(2));
+          },
+        }
+      );
+  
+      const videoUrlresponse = uploadResponse.data.filename;
+      // sessionStorage.setItem("__fileId", videoUrl);
 
-    const MAX_FILE_SIZE_MB = 500;
-  if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-    alert("Файл слишком большой! Максимальный размер 500MB.");
-    setLoadingVideo(false);
-    return;
-  }
+      const localVideoUrl = URL.createObjectURL(file);
+      setThisVideoUrl(localVideoUrl)
+  
+      setVideoUrl(videoUrlresponse);
+      setLoadingVideo(false);
+      setIsDisabled(false);
+  
+    } catch (error) {
+      setLoadingVideo(false);
+      setIsDisabled(true);
+    }
+  };
 
-  const formData = new FormData();
-  formData.append("video", file);
-
-  setTotalMB((file.size / (1024 * 1024)).toFixed(2));
-
-  try {
-    const uploadResponse = await axios.post(
-      `${process.env.REACT_APP_API_URL}/api/upload`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          setProgress(percentCompleted);
-          setUploadedMB((progressEvent.loaded / (1024 * 1024)).toFixed(2));
-        },
-      }
-    );
-
-    // Получаем URL загруженного видео сразу из ответа сервера
-    const videoUrl = uploadResponse.data.videoUrl;
-
-    // Сохраняем ID файла в sessionStorage (если нужно)
-    sessionStorage.setItem('__fileId', videoUrl);
-
-    // Устанавливаем видео
-    setVideoUrl(videoUrl);
-    setLoadingVideo(false);
-    setIsDisabled(false)
-
-    console.log("Видео загружено:", videoUrl);
-  } catch (error) {
-    setLoadingVideo(false);
-    setIsDisabled(true)
-    console.error("Ошибка при загрузке видео:", error);
-  }
-};
 
 const timerRef = useRef()
 
@@ -111,6 +123,16 @@ if (videoRef.current && videoIsPlay) {
       videoRef.current.pause();
       setVideoIsPlay(false)
       
+    }
+  }
+
+  const hnadleMuteUnmute = () => {
+    if(mute){
+      setMute(false)
+      videoRef.current.muted = false
+    } else {
+      setMute(true)
+      videoRef.current.muted = true
     }
   }
 
@@ -157,6 +179,7 @@ const handleDeleteVideo = async () => {
     });
     setLoadingVideo(false)
     setVideoUrl(null);
+    setThisVideoUrl(null)
     console.log("Видео удалено!");
   } catch (error) {
     setLoadingVideo(false)
@@ -179,12 +202,12 @@ const handleDeleteVideo = async () => {
  			 /> 
         <br/><p>{uploadedMB} MB / {totalMB} MB ({progress}%)</p>
        </> :
-       (videoLink || savedLink) ? <IoLockClosed/> : <span className={s.upload}><GoUpload/>Upload Video (to 500 MB)<span>(to 1 GB for premium users)</span></span>
+       (videoLink || savedLink) ? <IoLockClosed/> : <span className={s.upload}><GoUpload/>{t("Upload video (up to 500 MB)")}<span>{t('(up to 1 GB for premium users)')}</span></span>
      }</label>
 					:<div className={s.videoContainer}>
-          <video ref={videoRef} onClick={visibilityControl}  preload="metadata" controlsList="nofullscreen" playsInline webkit-playsinline>
-          <source src={videoUrl} type="video/mp4"></source>
-          <source src={videoUrl} type="video/ogg"></source>
+          <video ref={videoRef} onClick={visibilityControl}  preload="metadata" controlsList="nofullscreen" playsInline webkit-playsinline >
+          <source src={thisVideoUrl} type="video/mp4"></source>
+          <source src={thisVideoUrl} type="video/ogg"></source>
           </video>
           {(hideControl === false) && <div className={s.controlContent}>
           <div className={s.cBlock1}></div>
@@ -206,7 +229,7 @@ const handleDeleteVideo = async () => {
                  <div className={s.progressDuration} style={{width:`${(currentTime/videoRef?.current?.duration) * 100}%`}}></div>
                </span>
             </span>
-              <span className={s.cItem3}>M</span>
+              <span className={s.cItem3} onClick={hnadleMuteUnmute}>{mute ? <GoMute/> : <GoUnmute/> }</span>
             </div>
           </div>}
         	</div>}

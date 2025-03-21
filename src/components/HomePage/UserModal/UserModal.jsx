@@ -111,8 +111,8 @@ const currentLevel = calculateLevel(thisUser?.exp)
               transition={{ duration: 0.2 }}
               >
               <div className={s.userGiftMiniContent}>
-              {thisUser?.gifts !== null && thisUser?.gifts?.length !== 0
-               ?  thisUser?.gifts.map(gift => <motion.div 
+              {thisUser?.gifts !== null && thisUser?.gifts?.filter(gift => gift.is_selled !== true).length !== 0
+               ?  thisUser?.gifts.filter(gift => gift.is_selled !== true).map(gift => <motion.div 
                 className={gift.hidden ? `${s.hiddenGift} ${s.item2}` : s.item2} 
                 key={gift.id}
                 initial={{ opacity: 0}}
