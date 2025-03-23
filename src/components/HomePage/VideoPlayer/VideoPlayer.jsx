@@ -24,42 +24,35 @@ const videoRef = useRef(null);
 const thisUserId = window.Telegram.WebApp.initDataUnsafe?.user?.id 
 
 
-  useEffect(() => {
+const fetchVideo = async () => {
+  if (!roomData?.videoLink) return;
 
-      
+  const videoUrl = `${process.env.REACT_APP_API_URL}/api/video/${roomData.videoLink}`;
 
-  const fetchVideo = async () => {
-    
-    const videoUrl = `${process.env.REACT_APP_API_URL}/api/video/${roomData?.videoLink}`;
+  try {
+    const response = await axios.get(videoUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Range: "bytes=0-", 
+      },
+      responseType: "blob",
+    });
 
-    try {
-      const response = await axios.get(videoUrl, {
-        headers: {
-          Authorization: `Bearer ${token}`, 
-        },
-        responseType: 'blob', 
-      });
 
-      const videoBlob = response.data;
-      const videoObjectUrl = URL.createObjectURL(videoBlob);
+    const videoBlob = response.data;
+    const videoObjectUrl = URL.createObjectURL(videoBlob);
 
-      
-      videoRef.current.src = videoObjectUrl;
-      videoRef.current.load();
-      handleLoading()
-    } catch (error) {
-      console.error('Ошибка при загрузке видео:', error);
-    }
-  };
-
-  if (roomData?.videoLink) {
-    fetchVideo();
+    videoRef.current.src = videoObjectUrl;
+    videoRef.current.load();
+    handleLoading();
+  } catch (error) {
+    console.error("Ошибка при загрузке видео:", error);
   }
+};
 
-
-    
-  }, [roomData?.videoLink]);
-
+useEffect(() => {
+  fetchVideo();
+}, [roomData?.videoLink]);
 
   const handleVideoControl = (action) => {
   const player = videoRef.current;
@@ -267,19 +260,27 @@ const formatTime = (time) => {
 const timerPrevRef = useRef()
 
 const prevHandle = () => {
+  setLoading(true)
   clearTimeout(timerPrevRef.current)
   videoRef.current.currentTime = videoRef.current.currentTime - 15
   handleVideoControl("seek")
-  timerPrevRef.current = setTimeout(()=>{handleVideoControl("play")},50)
+  timerPrevRef.current = setTimeout(()=>{
+    setLoading(false)
+    handleVideoControl("play")
+  },20)
 }
 
 const timerNextRef = useRef()
 
 const nextHandle = () => {
+  setLoading(true)
   clearTimeout(timerNextRef.current)
   videoRef.current.currentTime = videoRef.current.currentTime + 15
   handleVideoControl("seek")
-  timerNextRef.current = setTimeout(()=>{handleVideoControl("play")},50)
+  timerNextRef.current = setTimeout(()=>{
+    setLoading(false)
+    handleVideoControl("play")
+  },20)
 }
 
 
