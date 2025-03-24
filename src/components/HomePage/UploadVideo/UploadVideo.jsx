@@ -53,54 +53,51 @@ const videoRef = useRef(null);
     setLoadingVideo(true);
     const file = event.target.files[0];
     if (!file) return;
-  
+
     const MAX_FILE_SIZE_MB = thisUser?.is_premium ? 1000 : 500;
-  
+
     if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-      alert(`Max file size ${MAX_FILE_SIZE_MB}MB. 1GB for premium users`);
-      setLoadingVideo(false);
-      return;
+        alert(`Max file size ${MAX_FILE_SIZE_MB}MB. 1GB for premium users`);
+        setLoadingVideo(false);
+        return;
     }
-  
+
     const formData = new FormData();
     formData.append("video", file);
-  
-    setTotalMB((file.size / (1024 * 1024)).toFixed(2));
-  
-    try {
-      const uploadResponse = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/upload?userId=${thisUserId}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setProgress(percentCompleted);
-            setUploadedMB((progressEvent.loaded / (1024 * 1024)).toFixed(2));
-          },
-        }
-      );
-  
-      const videoUrlresponse = uploadResponse.data.filename;
-      // sessionStorage.setItem("__fileId", videoUrl);
 
-      const localVideoUrl = URL.createObjectURL(file);
-      setThisVideoUrl(localVideoUrl)
-  
-      setVideoUrl(videoUrlresponse);
-      setLoadingVideo(false);
-      setIsDisabled(false);
-  
+    setTotalMB((file.size / (1024 * 1024)).toFixed(2));
+
+    try {
+        const uploadResponse = await axios.post(
+            `${process.env.REACT_APP_API_URL}/api/upload?userId=${thisUserId}`,
+            formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                },
+                onUploadProgress: (progressEvent) => {
+                    const percentCompleted = Math.round(
+                        (progressEvent.loaded * 100) / progressEvent.total
+                    );
+                    setProgress(percentCompleted);
+                    setUploadedMB((progressEvent.loaded / (1024 * 1024)).toFixed(2));
+                },
+            }
+        );
+
+        const { videoUrl } = uploadResponse.data;
+        const localVideoUrl = URL.createObjectURL(file);
+        setThisVideoUrl(localVideoUrl);
+
+        setVideoUrl(videoUrl);
+        setLoadingVideo(false);
+        setIsDisabled(false);
     } catch (error) {
-      setLoadingVideo(false);
-      setIsDisabled(true);
+        setLoadingVideo(false);
+        setIsDisabled(true);
     }
-  };
+};
 
 
 const timerRef = useRef()

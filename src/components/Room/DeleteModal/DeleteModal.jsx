@@ -18,17 +18,18 @@ const DeleteModal = ({roomData,deleteModal,setDeleteModal,roomId,userId}) => {
 
 const handleDeleteVideo = async () => {
   if (!roomData.videoLink) return;
-  setLoading(true)
-  const filename = roomData.videoLink;
+  setLoading(true);
+
+  const filename = roomData.videoLink.split("/").pop();
 
   try {
     await axios.delete(`${process.env.REACT_APP_API_URL}/api/delete/${filename}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-   	window.location.href = "/"
-   	setLoading(false)
+    window.location.href = "/";
+    setLoading(false);
   } catch (error) {
-  	setLoading(false)
+    setLoading(false);
     console.error("Ошибка при удалении видео:", error);
   }
 };

@@ -23,35 +23,12 @@ const videoRef = useRef(null);
 
 const thisUserId = window.Telegram.WebApp.initDataUnsafe?.user?.id 
 
+useEffect(() => {
 
-const fetchVideo = async () => {
-  if (!roomData?.videoLink) return;
-
-  const videoUrl = `${process.env.REACT_APP_API_URL}/api/video/${roomData.videoLink}`;
-
-  try {
-    const response = await axios.get(videoUrl, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Range: "bytes=0-", 
-      },
-      responseType: "blob",
-    });
-
-
-    const videoBlob = response.data;
-    const videoObjectUrl = URL.createObjectURL(videoBlob);
-
-    videoRef.current.src = videoObjectUrl;
+    videoRef.current.src = roomData?.videoLink;
     videoRef.current.load();
     handleLoading();
-  } catch (error) {
-    console.error("Ошибка при загрузке видео:", error);
-  }
-};
-
-useEffect(() => {
-  fetchVideo();
+  
 }, [roomData?.videoLink]);
 
   const handleVideoControl = (action) => {
